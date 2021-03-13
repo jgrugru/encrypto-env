@@ -1,7 +1,10 @@
 import argparse
-from EnvPath import EnvPath
-from PemFileManager import PemFileManager
+import os
+from EnvDir import EnvDir
+from EnvFile import EnvFile
+from PemFile import PemFile
 
+env_path = EnvDir()
 
 my_parser = argparse.ArgumentParser(
     prog='encrypto-env',
@@ -70,6 +73,12 @@ my_parser.add_argument(
 
 my_parser.add_argument(
     '-v',
+    '--verbose',
+    action='store_true',
+    help="Verbose ouptut"
+)
+
+my_parser.add_argument(
     '--version',
     action="version"
 )
@@ -80,8 +89,25 @@ print(vars(args))
 
 pem_filepath = args.pem_filename
 
-# if env_filepath:
-#     env_path.set_env_path(env_filepath)
+# use the --clear option
+if(args.clear):
+    if(args.verbose):
+        print("Clearing the .env file.")
+
+# use the -e option
+if args.environment_path:
+    env_path.set_filepath(args.environment_path)
+
+pem_file = PemFile(env_path, pem_filepath)
+
+# check if the env dir exists. Else create env and pem file
+if env_path.filepath_exists():
+    if(args.verbose):
+        print(env_path.get_filepath() + " already exists.")    
+else:
+    env_path.create_filepath(args.verbose)
+    pem_file.gen_pem_file(args.verbose)
+
 
 # # Checks if env folder exists or creates ones.
 # env_path.create_env_path()
