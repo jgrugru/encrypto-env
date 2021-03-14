@@ -4,7 +4,7 @@ from cryptography.hazmat.primitives import serialization
 from pem import parse_file
 from os import path
 
-from FileObject import FileObject
+from .FileObject import FileObject
 
 
 class PemFile(FileObject):

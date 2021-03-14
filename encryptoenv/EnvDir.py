@@ -1,5 +1,5 @@
 from os import path, mkdir, getcwd
-from FileObject import FileObject
+from .FileObject import FileObject
 
 
 class EnvDir(FileObject):
@@ -17,4 +17,5 @@ class EnvDir(FileObject):
         except OSError:
             print("Creation of the directory %s failed" % path)
         else:
-            print("Successfully created the directory %s " % path)
+            if verbose_flag:
+                print("Successfully created the directory %s " % path)

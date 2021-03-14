@@ -1,5 +1,5 @@
 from os import path, getcwd, remove
-from FileObject import FileObject
+from .FileObject import FileObject
 
 class EnvFile(FileObject):
 
