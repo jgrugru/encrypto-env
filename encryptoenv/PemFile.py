@@ -16,8 +16,7 @@ class PemFile(FileObject):
 
     def gen_key(self):
         private_key = rsa.generate_private_key(
-            public_exponent=65537, key_size=2048, backend=default_backend()
-        )
+            public_exponent=65537, key_size=2048, backend=default_backend())
         return private_key
 
     def gen_pem_file(self, verbose_flag):
@@ -25,8 +24,7 @@ class PemFile(FileObject):
         pem = pk.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.NoEncryption()
-        )
+            encryption_algorithm=serialization.NoEncryption())
 
         if(verbose_flag):
             print("Key generated\n", pem)
