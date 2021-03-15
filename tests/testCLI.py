@@ -8,6 +8,6 @@ from encryptoenv.CLI import parse_args
 
 def test_parser():
     print(__name__)
-    parser = parse_args(["my_key.pem"])
+    parser = parse_args(["my_key.pem", "-v"])
     print(parser)
     assert(True)

@@ -91,7 +91,11 @@ def add_arguments(my_parser):
 
 env_path = EnvDir()
 
-args = parse_args(argv[1:])
+if len(argv) > 1:
+    args = parse_args(argv[1:])
+else:
+    print("************************")
+    args = parse_args(["My_key.pem", "-v"])
 
 if args.verbose:
     print(vars(args))
