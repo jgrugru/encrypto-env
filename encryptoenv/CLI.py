@@ -85,6 +85,7 @@ class CLI():
         my_parser.add_argument(
             '-n',
             '--name',
+            metavar="name",
             action="store",
             help="Specify the name of the '.env' file."
         )
@@ -108,10 +109,9 @@ class CLI():
 
         return my_parser
 
-    def clear_option(self):
+    def clear_option(self, env_file):
         if(self.args.clear):
-            if(self.args.verbose):
-                print("Clearing the .env file.")
+            env_file.clear_file(self.args.verbose)
 
     def set_environmental_path(self):
         if self.args.environment_path:
@@ -150,11 +150,17 @@ class CLI():
         env_file = self.create_env_file_object()
 
         # use the --clear option
-        self.clear_option()
+        self.clear_option(env_file)
 
         # check if the env dir exists. Else create env and pem file
         self.create_dir_and_pem(pem_file)
 
+        # use the -b option
         if self.args.blank:
-            env_file.create_filepath()
-            print("Created file at " + env_file.get_filepath())
+            env_file.create_filepath(self.args.verbose)
+
+        # use the --add-variable option
+        if self.args.add_variable:
+            env_file.write_variables_to_file(
+                self.args.add_variable,
+                self.args.verbose)

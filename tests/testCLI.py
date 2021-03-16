@@ -3,12 +3,12 @@ import os.path
 from io import StringIO
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                             os.path.pardir)))
+                os.path.pardir)))
 
 from encryptoenv.CLI import CLI
 
 
-def test_parser(tmp_path):
+def test_environment_path(tmp_path):
     old_stdout = sys.stdout
     sys.stdout = mystdout = StringIO()
     my_cli = CLI([
@@ -24,14 +24,15 @@ def test_parser(tmp_path):
     assert env_path in stdout_value
 
 
-# def test_example(tm):
+# def test_version(tmp_path):
 #     old_stdout = sys.stdout
 #     sys.stdout = mystdout = StringIO()
 #     my_cli = CLI([
-#         "my_key.pem",
-#         "-v",
-#         "-e",
-#         os.path.join(tmp_path, 'env')])
+#             "my_key.pem",
+#             "--version",
+#         ])
 #     my_cli.run_script()
 #     sys.stdout = old_stdout
 #     stdout_value = mystdout.getvalue()
+#     # assert "1.0" in stdout_value
+#     assert(True)

@@ -10,7 +10,7 @@ class FileObject():
         return self.filepath
 
     def filepath_exists(self):
-        if path.isdir(self.filepath):
+        if path.isdir(self.filepath) or path.exists(self.filepath):
             return True
         else:
             return False

@@ -62,8 +62,6 @@ for line in os.listdir(input_path):
 """
 
 
-
-
 """
 import argparse
 
