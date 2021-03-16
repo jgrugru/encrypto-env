@@ -1,10 +1,11 @@
-from os import path, getcwd, remove
+from os import path
 from .FileObject import FileObject
+
 
 class EnvFile(FileObject):
 
-    default_path = path.join(getcwd(), 'env', '.env')
+    def __init__(self, environment_path, filename='.env'):
+        self.filepath = path.join(environment_path, filename)
 
-
-    def __init__(self, filepath=default_path):
-        self.filepath = filepath
+    def create_filepath(self):
+        open(self.filepath, 'a').close()

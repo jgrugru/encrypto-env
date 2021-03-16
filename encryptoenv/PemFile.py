@@ -12,7 +12,7 @@ class PemFile(FileObject):
     def __init__(self, env_path, filename="my_key.pem"):
         self.filename = filename
         self.env_path = env_path
-        self.filepath = path.join(self.env_path.get_filepath(), self.filename)
+        self.filepath = path.join(env_path, self.filename)
 
     def gen_key(self):
         private_key = rsa.generate_private_key(

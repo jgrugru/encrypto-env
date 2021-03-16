@@ -1,4 +1,4 @@
-from os import path, mkdir, getcwd, remove
+from os import path
 
 
 class FileObject():
@@ -20,6 +20,6 @@ class FileObject():
 
     def delete_file(self):
         pass
-    
+
     def __str__(self):
         return self.filepath
