@@ -19,7 +19,7 @@ class CLI():
         self.env_dir = EnvDir()
 
     def parse_args(self, args):
-        my_parser = argparse.ArgumentParser(
+        self.my_parser = argparse.ArgumentParser(
             prog='encrypto-env',
             usage='%(prog)s [options] path',
             description="Encrypt the contents of your .env file \
@@ -29,20 +29,22 @@ class CLI():
                 email: jeff.gruenbaum@gmail.com | github: @jgrugru',
             fromfile_prefix_chars='@')
 
-        my_parser.version = cli_version
+        self.my_group = self.my_parser.add_mutually_exclusive_group(required=False)
 
-        my_parser = self.add_arguments(my_parser)
+        self.my_parser.version = cli_version
 
-        return my_parser.parse_args(args)
+        self.add_arguments()
 
-    def add_arguments(self, my_parser):
-        my_parser.add_argument(
+        return self.my_parser.parse_args(args)
+
+    def add_arguments(self):
+        self.my_parser.add_argument(
             "pem_filename",
             metavar="pem_filename",
             type=str,
             help="The pem filepath relative to the env folder")
 
-        my_parser.add_argument(
+        self.my_parser.add_argument(
             '-e',
             '--environment-path',
             metavar="env_path",
@@ -50,25 +52,13 @@ class CLI():
             help="Default is 'env' dir. This is where \
                   the program looks for the pem.")
 
-        my_parser.add_argument(
-            '-E',
-            '--Encrypt',
-            action='store_true',
-            help="Encrypt .env file that already exists.")
-
-        my_parser.add_argument(
-            '-D',
-            '--Decrypt',
-            action='store_true',
-            help='Decrypt .env file and output variables.')
-
-        my_parser.add_argument(
+        self.my_parser.add_argument(
             '-b',
             '--blank',
             action='store_true',
             help="Create blank .env file if one does not exist.")
 
-        my_parser.add_argument(
+        self.my_parser.add_argument(
             '-a',
             '--add-variable',
             action='store',
@@ -77,12 +67,12 @@ class CLI():
             nargs='+',
             help="Add variables that will be encrypted to the .env file.")
 
-        my_parser.add_argument(
+        self.my_parser.add_argument(
             '--clear',
             action='store_true',
             help="Clear the .env file of all variables.")
 
-        my_parser.add_argument(
+        self.my_parser.add_argument(
             '-n',
             '--name',
             metavar="name",
@@ -97,17 +87,27 @@ class CLI():
         #           It will be placed in the environment path specified."
         # )
 
-        my_parser.add_argument(
+        self.my_parser.add_argument(
             '-v',
             '--verbose',
             action='store_true',
             help="Verbose ouptut")
 
-        my_parser.add_argument(
+        self.my_parser.add_argument(
             '--version',
             action="version")
 
-        return my_parser
+        self.my_group.add_argument(
+            '-E',
+            '--Encrypt',
+            action='store_true',
+            help="Encrypt .env file that already exists.")
+
+        self.my_group.add_argument(
+            '-D',
+            '--Decrypt',
+            action='store_true',
+            help='Decrypt .env file and output variables.')
 
     def clear_option(self, env_file):
         if(self.args.clear):
