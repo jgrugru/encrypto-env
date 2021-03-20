@@ -21,5 +21,12 @@ class FileObject():
     def delete_file(self):
         pass
 
+    def get_contents_of_file(self):
+        with open(self.filepath, 'r') as my_file:
+            data = my_file.read()
+
+        return data
+
     def __str__(self):
         return self.filepath
+

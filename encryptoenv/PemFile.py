@@ -1,6 +1,4 @@
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import serialization
+from Crypto.PublicKey import RSA
 from pem import parse_file
 from os import path
 
@@ -15,27 +13,31 @@ class PemFile(FileObject):
         self.filepath = path.join(env_path, self.filename)
 
     def gen_key(self):
-        private_key = rsa.generate_private_key(
-            public_exponent=65537, key_size=2048, backend=default_backend())
-        return private_key
+        return RSA.generate(2048)
 
     def gen_pem_file(self, verbose_flag):
-        pk = self.gen_key()
-        pem = pk.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.NoEncryption())
+        key = self.gen_key()
 
         if(verbose_flag):
-            print("Key generated\n", pem)
+            print("Key generated\n", key)
 
-        with open(self.filepath, 'wb') as pem_out:
-            pem_out.write(pem)
-            if(verbose_flag):
-                print("The key was saved to " + self.filepath)
+        f = open(self.filepath,'wb')
+        f.write(key.export_key('PEM'))
+        f.close()
 
-    def read_key(self):
-        return parse_file(self.filepath)
+        if(verbose_flag):
+            print("The key was saved to " + self.filepath)
+
+    def get_key(self):
+        # return parse_file(self.filepath)
+        if self.filepath_exists():
+            with open(self.filepath,'r') as pem_file:
+                key = RSA.import_key(pem_file.read())
+        else:
+            key = None
+            print(self.filepath + " does not exist.")
+        
+        return key
 
     def __str__(self):
         return self.filepath

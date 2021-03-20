@@ -8,6 +8,7 @@ pem==21.1.0
 pluggy==0.13.1
 py==1.10.0
 pycparser==2.20
+pycryptodome==3.10.1
 pyparsing==2.4.7
 pytest==6.2.2
 toml==0.10.2

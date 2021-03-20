@@ -1,6 +1,10 @@
 import argparse
 import os
 from sys import path
+from Crypto.Cipher import Salsa20
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
+from base64 import b64decode,b64encode
 
 path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
             os.path.pardir)))
@@ -8,6 +12,7 @@ path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
 from encryptoenv.EnvDir import EnvDir
 from encryptoenv.EnvFile import EnvFile
 from encryptoenv.PemFile import PemFile
+from encryptoenv.Encryptor import Encryptor
 
 cli_version = '1.0'
 
@@ -29,7 +34,8 @@ class CLI():
                 email: jeff.gruenbaum@gmail.com | github: @jgrugru',
             fromfile_prefix_chars='@')
 
-        self.my_group = self.my_parser.add_mutually_exclusive_group(required=False)
+        self.my_group = self.my_parser.add_mutually_exclusive_group(
+            required=False)
 
         self.my_parser.version = cli_version
 
@@ -134,6 +140,14 @@ class CLI():
         else:
             return EnvFile(self.env_dir.get_filepath(), self.args.name)
 
+    def encrypt_env_file(self, pem_file, env_file):
+        my_encryptor = Encryptor(pem_file.get_key())
+        encrypted_file_contents = my_encryptor.encrypt_data(env_file.get_contents_of_file())
+        print("Encrypted", encrypted_file_contents)
+        decrypted_file_contents = my_encryptor.decrypt_data(encrypted_file_contents)
+        print("Decrypted", decrypted_file_contents)
+        return "True"
+
     def run_script(self):
 
         # Use the -e option to set the environment path.
@@ -155,12 +169,15 @@ class CLI():
         # check if the env dir exists. Else create env and pem file
         self.create_dir_and_pem(pem_file)
 
-        # use the -b option
+        # use the -b (blank) option
         if self.args.blank:
             env_file.create_filepath(self.args.verbose)
 
         # use the --add-variable option
         if self.args.add_variable:
-            env_file.write_variables_to_file(
-                self.args.add_variable,
-                self.args.verbose)
+            env_file.write_variables_to_file(self.args.add_variable,
+                                             self.args.verbose)
+
+        if self.args.verbose:
+            print("TESTING",'\n-------------')
+            self.encrypt_env_file(pem_file, env_file)
