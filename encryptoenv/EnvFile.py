@@ -20,7 +20,7 @@ class EnvFile(FileObject):
                     print("Writing " + var + " to " + self.filepath)
                 env_file.write(var + '\n')
 
-    def clear_file(self, verbose_flag):
+    def clear_file(self, verbose_flag=False):
         if self.filepath_exists():
             open(self.filepath, 'w').close()
             if verbose_flag:
@@ -28,3 +28,8 @@ class EnvFile(FileObject):
         else:
             print("The file could not be cleared because "
                   + self.filepath + " does not exist.")
+
+    def write_data_to_file(self, data):
+        self.clear_file()
+        with open(self.filepath, 'wb') as env_file:
+            env_file.write(data)

@@ -140,13 +140,19 @@ class CLI():
         else:
             return EnvFile(self.env_dir.get_filepath(), self.args.name)
 
-    def encrypt_env_file(self, pem_file, env_file):
-        my_encryptor = Encryptor(pem_file.get_key())
-        encrypted_file_contents = my_encryptor.encrypt_data(env_file.get_contents_of_file())
-        print("Encrypted", encrypted_file_contents)
-        decrypted_file_contents = my_encryptor.decrypt_data(encrypted_file_contents)
-        print("Decrypted", decrypted_file_contents)
-        return "True"
+    def encrypt_env_file(self, encryptor, env_file):
+        if env_file.filepath_exists():
+            encrypted_data = encryptor.encrypt_data(env_file.get_contents_of_file())
+            env_file.write_data_to_file(encrypted_data)
+        else:
+            print(env_file.get_filepath + " does not exist.")
+
+    # def decrypt_env_file(self, encryptor, env_file):
+    #     if env_file.filepath_exists():
+    #         decrypted_data = encryptor.decrypt_data(env_file.get_contents_of_file()
+    #         env_file.write_data_to_file(decrypted_data)
+    #     else:
+    #         print(env_file.get_filepath + " does not exist.")
 
     def run_script(self):
 
@@ -163,6 +169,8 @@ class CLI():
 
         env_file = self.create_env_file_object()
 
+        encryptor = Encryptor(pem_file.get_key())
+
         # use the --clear option
         self.clear_option(env_file)
 
@@ -178,6 +186,12 @@ class CLI():
             env_file.write_variables_to_file(self.args.add_variable,
                                              self.args.verbose)
 
-        if self.args.verbose:
-            print("TESTING",'\n-------------')
-            self.encrypt_env_file(pem_file, env_file)
+        if self.args.Encrypt:
+            self.encrypt_env_file(encryptor, env_file)
+
+        if self.args.Decrypt:
+            self.decrypt_env_file(encryptor, env_file)
+
+        # if self.args.verbose:
+        #     print("TESTING",'\n-------------')
+        #     self.encrypt_env_file(encryptor, env_file)
