@@ -1,10 +1,6 @@
 import argparse
 import os
 from sys import path
-from Crypto.Cipher import Salsa20
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
-from base64 import b64decode,b64encode
 
 path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
             os.path.pardir)))
@@ -18,6 +14,11 @@ cli_version = '1.0'
 
 
 class CLI():
+    """
+    Class that filters through the command line options.
+    The run_script function is the lead function, calling
+    functions for each specified option.
+    """
 
     def __init__(self, args):
         self.args = self.parse_args(args)
@@ -86,13 +87,6 @@ class CLI():
             help="Specify the name of the '.env' file."
         )
 
-        # my_parser.add_argument(
-        #     '--directory-name',
-        #     action="store",
-        #     help="Specify the name of the dir for .env to be stored. \
-        #           It will be placed in the environment path specified."
-        # )
-
         self.my_parser.add_argument(
             '-v',
             '--verbose',
@@ -142,16 +136,17 @@ class CLI():
 
     def encrypt_env_file(self, encryptor, env_file):
         if env_file.filepath_exists():
-            encrypted_data = encryptor.encrypt_data(env_file.get_contents_of_file())
+            encrypted_data = encryptor.encrypt_data(
+                env_file.get_contents_of_file())
             env_file.write_data_to_file(encrypted_data, is_encrypted=True)
         else:
             print(env_file.get_filepath + " does not exist.")
 
     def decrypt_env_file(self, encryptor, env_file):
         if env_file.filepath_exists():
-            decrypted_data = encryptor.decrypt_data(env_file.get_contents_of_file(is_encrypted=True))
-            print("***********\n", decrypted_data)
-            print(type(decrypted_data))
+            decrypted_data = encryptor.decrypt_data(
+                env_file.get_contents_of_file(is_encrypted=True))
+            print(decrypted_data)
             env_file.delete_file(self.args.verbose)
             env_file.create_filepath(self.args.verbose)
             env_file.write_data_to_file(decrypted_data)

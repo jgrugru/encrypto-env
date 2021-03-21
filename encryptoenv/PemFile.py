@@ -1,5 +1,4 @@
 from Crypto.PublicKey import RSA
-from pem import parse_file
 from os import path
 
 from .FileObject import FileObject
@@ -21,7 +20,7 @@ class PemFile(FileObject):
         if(verbose_flag):
             print("Key generated\n", key)
 
-        f = open(self.filepath,'wb')
+        f = open(self.filepath, 'wb')
         f.write(key.export_key('PEM'))
         f.close()
 
@@ -31,12 +30,12 @@ class PemFile(FileObject):
     def get_key(self):
         # return parse_file(self.filepath)
         if self.filepath_exists():
-            with open(self.filepath,'r') as pem_file:
+            with open(self.filepath, 'r') as pem_file:
                 key = RSA.import_key(pem_file.read())
         else:
             key = None
             print(self.filepath + " does not exist.")
-        
+
         return key
 
     def __str__(self):
