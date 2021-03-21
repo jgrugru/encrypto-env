@@ -143,7 +143,7 @@ class CLI():
     def encrypt_env_file(self, encryptor, env_file):
         if env_file.filepath_exists():
             encrypted_data = encryptor.encrypt_data(env_file.get_contents_of_file())
-            env_file.write_data_to_file(encrypted_data)
+            env_file.write_data_to_file(encrypted_data, is_encrypted=True)
         else:
             print(env_file.get_filepath + " does not exist.")
 

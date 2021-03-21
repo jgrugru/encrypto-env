@@ -31,11 +31,17 @@ class EnvFile(FileObject):
             print("The file could not be cleared because "
                   + self.filepath + " does not exist.")
 
-    def write_data_to_file(self, data):
+    def write_data_to_file(self, data, is_encrypted=False):
         # self.clear_file()
-        with open(self.filepath, 'w') as env_file:
-            env_file.write(data)
-            env_file.close()
+        if is_encrypted:
+            self.clear_file()
+            with open(self.filepath, 'wb') as env_file:
+                env_file.write(data)
+                env_file.close()
+        else:
+            with open(self.filepath, 'w') as env_file:
+                env_file.write(data)
+                env_file.close()
 
     def get_binary_contents(self, verbose_flag=False):
         data = Path(self.filepath).read_bytes()
