@@ -147,12 +147,16 @@ class CLI():
         else:
             print(env_file.get_filepath + " does not exist.")
 
-    # def decrypt_env_file(self, encryptor, env_file):
-    #     if env_file.filepath_exists():
-    #         decrypted_data = encryptor.decrypt_data(env_file.get_contents_of_file()
-    #         env_file.write_data_to_file(decrypted_data)
-    #     else:
-    #         print(env_file.get_filepath + " does not exist.")
+    def decrypt_env_file(self, encryptor, env_file):
+        if env_file.filepath_exists():
+            decrypted_data = encryptor.decrypt_data(env_file.get_contents_of_file(is_encrypted=True))
+            print("***********\n", decrypted_data)
+            print(type(decrypted_data))
+            env_file.delete_file(self.args.verbose)
+            env_file.create_filepath(self.args.verbose)
+            env_file.write_data_to_file(decrypted_data)
+        else:
+            print(env_file.get_filepath + " does not exist.")
 
     def run_script(self):
 
@@ -194,4 +198,4 @@ class CLI():
 
         # if self.args.verbose:
         #     print("TESTING",'\n-------------')
-        #     self.encrypt_env_file(encryptor, env_file)
+        #     env_file.get_binary_contents()

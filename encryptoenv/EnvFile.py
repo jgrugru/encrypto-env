@@ -1,4 +1,6 @@
 from os import path
+from pathlib import Path
+import struct
 from .FileObject import FileObject
 
 
@@ -30,6 +32,12 @@ class EnvFile(FileObject):
                   + self.filepath + " does not exist.")
 
     def write_data_to_file(self, data):
-        self.clear_file()
-        with open(self.filepath, 'wb') as env_file:
+        # self.clear_file()
+        with open(self.filepath, 'w') as env_file:
             env_file.write(data)
+            env_file.close()
+
+    def get_binary_contents(self, verbose_flag=False):
+        data = Path(self.filepath).read_bytes()
+        ints = struct.unpack('iiii', data[:16])
+        return ints
