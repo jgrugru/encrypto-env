@@ -5,6 +5,16 @@ from .FileObject import FileObject
 
 
 class PemFile(FileObject):
+    """
+    An abstraction of the 'my_key.pem" file.
+    Inherits all the functions from FileObject. Extends 
+    the class with functions:
+    -GEN_KEY: generates an RSA key
+    -GEN_PEM_FILE: calls the gen_key and stores it
+    in the pem file
+    -GET_KEY: grabs the key from the file and 
+    returns the key in a useable format for Crypto.
+    """
 
     def __init__(self, env_path, filename="my_key.pem"):
         self.filename = filename
@@ -28,8 +38,8 @@ class PemFile(FileObject):
             print("The key was saved to " + self.filepath)
 
     def get_key(self):
-        # return parse_file(self.filepath)
         key = None
+        
         if self.filepath_exists():
             with open(self.filepath, 'r') as pem_file:
                 key = RSA.import_key(pem_file.read())
@@ -37,6 +47,3 @@ class PemFile(FileObject):
             print(self.filepath + " does not exist.")
 
         return key
-
-    def __str__(self):
-        return self.filepath

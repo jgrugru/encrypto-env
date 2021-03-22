@@ -2,6 +2,12 @@ from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
 
 
 class Encryptor():
+    """
+    This class utilizes the Crypto PyPi package.
+    Accepts an RSA key as an argument. The
+    encrypt and decrypt class use the key
+    with the Cipher_PKCS1_v1_5 algorithm.
+    """
 
     def __init__(self, pem_key):
         self.pem_key = pem_key

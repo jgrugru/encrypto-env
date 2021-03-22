@@ -5,10 +5,10 @@ from sys import path
 path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
             os.path.pardir)))
 
-from encryptoenv.EnvDir import EnvDir
-from encryptoenv.EnvFile import EnvFile
-from encryptoenv.PemFile import PemFile
-from encryptoenv.Encryptor import Encryptor
+from .EnvDir import EnvDir
+from .EnvFile import EnvFile
+from .PemFile import PemFile
+from .Encryptor import Encryptor
 
 cli_version = '1.0'
 
