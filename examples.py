@@ -105,6 +105,7 @@ my_parser.add_argument(
 args = my_parser.parse_args()
 print(vars(args))"""
 
+"""
 import argparse
 
 my_parser = argparse.ArgumentParser()
@@ -117,7 +118,7 @@ my_parser.add_argument(
 args = my_parser.parse_args()
 
 print(args.input)
-
+"""
 # print('\n'.join(os.listdir(input_path)))
 
 
@@ -131,3 +132,91 @@ print(args.input)
 
 
 # input_path = sys.argv[1]
+
+
+######################################
+#---------------Unit Test-------------
+######################################
+
+# from unittest import TestCase
+
+# class TryTesting(TestCase):
+#     def test_always_passes(self):
+#         self.assertTrue(True)
+
+#     def test_always_fails(self):
+#         self.assertTrue(False)
+
+# def test_uppercase():
+#     assert "loud noises".upper() == "LOUD NOISES"
+
+# def test_reversed():
+#     assert list(reversed([1,2,3,4])) == [4,3,2,1]
+
+# def test_some_primes():
+#     assert 37 in {
+#         num
+#         for num in range(1,50)
+#         if num != 1 and not any([num % div == 0 for div in range(2, num)])
+#     }
+
+# import pytest
+
+# @pytest.fixture
+# def example_people_data():
+#     people = [
+#         {
+#             "given_name": "Alfonsa",
+#             "family_name": "Ruiz",
+#             "title": "Senior Software Engineer",
+#         },
+#         {
+#             "given_name": "Sayid",
+#             "family_name": "Khan",
+#             "title": "Project Manager",
+#         },
+#     ]
+
+#     return people
+
+# def test_format_data_for_excel(example_people_data):
+#     pass
+
+# def test_format_data_for_display(example_people_data):
+#     pass
+
+import pytest
+
+def is_palindrome(s):
+    return s == s[::-1]
+
+@pytest.mark.parametrize("maybe_palindrome, expected_result", [
+    ("", True),
+    ("a", True),
+    ("bob", True),
+    ("neveroddoreven", True),
+    ("dogeeseseegod", True),
+    ("abc", False),
+    ("abab", False),
+])
+def test_is_palindrome(maybe_palindrome, expected_result):
+    assert is_palindrome(maybe_palindrome) == expected_result
+
+# @pytest.mark.parametrize("non_palindrome", [
+#     "abc",
+#     "abab",
+# ])
+# def test_is_not_palindrome(non_palindrome):
+#     assert not is_palindrome(non_palindrome)
+
+
+# conftest.py file
+# ------------------
+# import pytest
+# import requests
+
+# @pytest.fixture(autouse=True)
+# def disable_network_calls(monkeypatch):
+#     def stunted_get():
+#         raise RuntimeError("Network access not allowed during testing!")
+    # monkeypatch.setattr(requests, "get", lambda * args, **kwargs: stunted_get())
