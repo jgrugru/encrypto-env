@@ -5,7 +5,7 @@ from .FileObject import FileObject
 class EnvDir(FileObject):
     """
     This class is an abstraction of the
-    environmental path. Inherits from 
+    environmental path. Inherits from
     FileOBject. The default environment
     path is ./env. This can be overwritten
     with the -e or --environment-path.

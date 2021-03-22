@@ -135,7 +135,7 @@ print(args.input)
 
 
 ######################################
-#---------------Unit Test-------------
+# ---------------Unit Test------------
 ######################################
 
 # from unittest import TestCase
@@ -187,8 +187,10 @@ print(args.input)
 
 import pytest
 
+
 def is_palindrome(s):
     return s == s[::-1]
+
 
 @pytest.mark.parametrize("maybe_palindrome, expected_result", [
     ("", True),

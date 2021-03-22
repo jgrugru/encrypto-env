@@ -1,12 +1,13 @@
 from os import path, remove, stat
 
+
 class FileObject():
     """
     Base file class inherited by EnvDir, EnvFile,
     PemFile. Contains functions that can be utilized by any file.
     IS_BINARY() and IS_EMPTY() are largely useful during testing.
     """
-
+ 
     def __init__(self, filepath):
         self.filepath = filepath
 

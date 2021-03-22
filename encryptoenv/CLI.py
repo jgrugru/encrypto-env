@@ -1,9 +1,4 @@
 import argparse
-import os
-from sys import path
-
-path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-            os.path.pardir)))
 
 from .EnvDir import EnvDir
 from .EnvFile import EnvFile
@@ -132,6 +127,7 @@ class CLI():
         if not self.args.name:
             return EnvFile(self.env_dir.get_filepath())
         else:
+            self.args.blank = True
             return EnvFile(self.env_dir.get_filepath(), self.args.name)
 
     def encrypt_env_file(self, encryptor, env_file):
@@ -139,7 +135,8 @@ class CLI():
             if env_file.filepath_exists():
                 encrypted_data = encryptor.encrypt_data(
                     env_file.get_contents_of_file())
-                env_file.write_data_to_file(encrypted_data, verbose_flag=self.args.verbose)
+                env_file.write_data_to_file(
+                    encrypted_data, verbose_flag=self.args.verbose)
             else:
                 print(env_file.get_filepath + " does not exist.")
         else:
@@ -151,9 +148,8 @@ class CLI():
             decrypted_data = encryptor.decrypt_data(
                 env_file.get_contents_of_file())
             print(decrypted_data)
-            # env_file.delete_file(self.args.verbose)
-            # env_file.create_filepath(self.args.verbose)
-            env_file.write_data_to_file(decrypted_data, verbose_flag=self.args.verbose)
+            env_file.write_data_to_file(
+                decrypted_data, verbose_flag=self.args.verbose)
         else:
             print(env_file.get_filepath + " does not exist.")
 
@@ -194,7 +190,3 @@ class CLI():
 
         if self.args.Decrypt:
             self.decrypt_env_file(encryptor, env_file)
-
-        # if self.args.verbose:
-        #     print("TESTING",'\n-------------')
-        #     env_file.get_binary_contents()
