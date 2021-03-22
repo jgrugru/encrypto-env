@@ -1,7 +1,9 @@
-from os import path, remove
-
+from os import path, remove, stat
 
 class FileObject():
+
+    def __init__(self, filepath):
+        self.filepath = filepath
 
     def set_filepath(self, filepath):
         self.filepath = filepath
@@ -30,8 +32,8 @@ class FileObject():
             print("The file could not be deleted because "
                   + self.filepath + " does not exist.")
 
-    def get_contents_of_file(self, is_encrypted=False):
-        if not is_encrypted:
+    def get_contents_of_file(self):
+        if not self.is_binary():
             with open(self.filepath, 'r') as my_file:
                 data = my_file.read()
         else:
@@ -47,6 +49,20 @@ class FileObject():
         else:
             print("The file could not be cleared because "
                   + self.filepath + " does not exist.")
+
+    def is_binary(self, verbose_flag=False):
+        try:
+            with open(self.filepath, "r") as f:
+                f.read()
+        except UnicodeDecodeError:
+            return True
+        return False
+
+    def is_empty(self, verbose_flag=False):
+        if stat(self.filepath).st_size == 0:
+            return True
+        else:
+            return False
 
     def __str__(self):
         return self.filepath

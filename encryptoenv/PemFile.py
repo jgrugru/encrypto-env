@@ -29,11 +29,11 @@ class PemFile(FileObject):
 
     def get_key(self):
         # return parse_file(self.filepath)
+        key = None
         if self.filepath_exists():
             with open(self.filepath, 'r') as pem_file:
                 key = RSA.import_key(pem_file.read())
         else:
-            key = None
             print(self.filepath + " does not exist.")
 
         return key
