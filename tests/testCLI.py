@@ -130,19 +130,26 @@ def env_setup_for_file_object(tmp_path):
     ("../env_path/.env", True, True),
     ("../env_path1/.env/", True, False),
 ])
-def test_file_object_create_filepath(env_setup_for_file_object,
-                                     file_path,
-                                     expected_result,
-                                     is_file):
+def test_file_object_create_and_delete_filepath(env_setup_for_file_object,
+                                                file_path,
+                                                expected_result,
+                                                is_file):
     my_file = FileObject(file_path)
     my_file.create_filepath()
     assert my_file.filepath_exists() == expected_result
     assert path.isfile(my_file.get_filepath()) == is_file
+    my_file.delete_file()
+    assert my_file.filepath_exists() != is_file
 
 
 def test_file_object_str(file_object):
     assert file_object.get_filepath() == str(file_object)
 
 
-def test_file_object_get_contents(file_object_with_content):
+def test_file_object_get_contents_of_text_file(file_object_with_content):
     assert file_object_with_content.get_contents_of_text_file() == '0123456789'
+
+
+def test_file_object_clear_file(file_object_with_content):
+    file_object_with_content.clear_file()
+    assert file_object_with_content.is_empty()

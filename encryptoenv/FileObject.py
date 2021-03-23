@@ -32,13 +32,13 @@ class FileObject():
             pass
 
     def delete_file(self, verbose_flag=False):
-        if self.filepath_exists():
+        if self.filepath_exists() and self.is_file():
             remove(self.filepath)
             if verbose_flag:
                 print("Deleted " + self.filepath)
         else:
             print("The file could not be deleted because "
-                  + self.filepath + " does not exist.")
+                  + self.filepath + " does not exist or it is a directory.")
 
     def append_data_to_file(self, data, verbose_flag=False):
         f = open(self.filepath, 'a')
@@ -91,6 +91,9 @@ class FileObject():
 
     def is_dir(self, verbose_flag=False):
         return path.isdir(self.filepath)
+
+    def is_file(self, verbose_flage=False):
+        return path.isfile(self.filepath)
 
     def __str__(self):
         return self.filepath
