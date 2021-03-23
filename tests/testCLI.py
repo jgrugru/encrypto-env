@@ -1,7 +1,7 @@
 import sys
-from os import path
+from os import path, chdir, getcwd
 from io import StringIO
-from pytest import fixture
+from pytest import fixture, mark
 
 sys.path.append(path.abspath(path.join(path.dirname(__file__),
                 path.pardir)))
@@ -23,7 +23,6 @@ def base_args(tmp_path):
 
 @fixture
 def base_args_with_vars(base_args):
-    print("BASE ARGS", id(base_args))
     new_args_list = base_args[:]
     new_args_list.append("-a 'test=123' 'test1=123'")
     return new_args_list
@@ -31,7 +30,7 @@ def base_args_with_vars(base_args):
 
 @fixture
 def base_args_with_vars_encrypted(base_args_with_vars):
-    print("BASE ARGS WITH VARS", id(base_args_with_vars))
+    # create a new list with a new spot in memory
     new_args_list = base_args_with_vars[:]
     new_args_list.append('-E')
     return new_args_list
@@ -76,8 +75,6 @@ def test_append_variables(base_args_with_vars):
 
 def test_encrypt_and_decrypt(
         base_args_with_vars_encrypted, base_args_decrypted):
-    print("BASE ARGS WITH VARS ENCRYPTED", id(base_args_with_vars_encrypted))
-    print("******************", base_args_with_vars_encrypted)
     my_cli = CLI(base_args_with_vars_encrypted)
     my_cli.run_script()
     env_file = FileObject(
@@ -102,19 +99,50 @@ def test_clear_option(base_args):
     # test that blank doesn't clear file that already exists
     # test -name
 
+
 @fixture
 def file_object(tmp_path):
     my_file = FileObject(path.join(tmp_path, 'env'))
+    my_file.create_filepath()
     return my_file
 
 
-def test_file_object_create_and_delete_filepath(file_object):
-    assert not file_object.filepath_exists()
-    file_object.create_filepath()
-    assert file_object.filepath_exists()
-    file_object.delete_file()
-    assert not file_object.filepath_exists()
+@fixture
+def file_object_with_content(file_object):
+    file_object.append_data_to_file("0123456789")
+    return file_object
+
+
+@fixture
+def env_setup_for_file_object(tmp_path):
+    chdir(tmp_path)
+    print(getcwd(), "*****")
+
+
+@mark.parametrize("file_path, expected_result, is_file", [
+    ("env_path/.env", True, True),
+    ("./env_path/env", True, True),
+    (".env_path/env", True, True),
+    ("env_path/env/", True, False),
+    (".env_path/env/", True, False),
+    ("././././env/", True, False),
+    ("././././env", True, True),
+    ("../env_path/.env", True, True),
+    ("../env_path1/.env/", True, False),
+])
+def test_file_object_create_filepath(env_setup_for_file_object,
+                                     file_path,
+                                     expected_result,
+                                     is_file):
+    my_file = FileObject(file_path)
+    my_file.create_filepath()
+    assert my_file.filepath_exists() == expected_result
+    assert path.isfile(my_file.get_filepath()) == is_file
 
 
 def test_file_object_str(file_object):
     assert file_object.get_filepath() == str(file_object)
+
+
+def test_file_object_get_contents(file_object_with_content):
+    assert file_object_with_content.get_contents_of_text_file() == '0123456789'

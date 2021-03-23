@@ -1,4 +1,4 @@
-from os import path, remove, stat
+from os import path, remove, stat, makedirs
 
 
 class FileObject():
@@ -7,7 +7,7 @@ class FileObject():
     PemFile. Contains functions that can be utilized by any file.
     IS_BINARY() and IS_EMPTY() are largely useful during testing.
     """
- 
+
     def __init__(self, filepath):
         self.filepath = filepath
 
@@ -24,10 +24,12 @@ class FileObject():
             return False
 
     def create_filepath(self, verbose_flag=False):
-        if not path.exists(self.filepath):
-            open(self.filepath, 'a').close()
-            if verbose_flag:
-                print("Created blank file at " + self.filepath)
+        makedirs(path.dirname(self.filepath), exist_ok=True)
+        try:
+            with open(self.filepath, "a") as f:
+                f.write("")
+        except Exception:
+            pass
 
     def delete_file(self, verbose_flag=False):
         if self.filepath_exists():
@@ -38,6 +40,11 @@ class FileObject():
             print("The file could not be deleted because "
                   + self.filepath + " does not exist.")
 
+    def append_data_to_file(self, data, verbose_flag=False):
+        f = open(self.filepath, 'a')
+        f.write(data)
+        f.close()
+
     def get_contents_of_file(self):
         if not self.is_binary():
             with open(self.filepath, 'r') as my_file:
@@ -45,6 +52,18 @@ class FileObject():
         else:
             with open(self.filepath, 'rb') as my_file:
                 data = my_file.read()
+        return data
+
+    def get_contents_of_text_file(self):
+        data = None
+        with open(self.filepath, 'r') as my_file:
+            data = my_file.read()
+        return data
+
+    def get_contents_binary_file(self):
+        data = None
+        with open(self.filepath, 'rb') as my_file:
+            data = my_file.read()
         return data
 
     def clear_file(self, verbose_flag=False):
@@ -69,6 +88,9 @@ class FileObject():
             return True
         else:
             return False
+
+    def is_dir(self, verbose_flag=False):
+        return path.isdir(self.filepath)
 
     def __str__(self):
         return self.filepath

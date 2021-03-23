@@ -16,7 +16,7 @@ class EnvDir(FileObject):
     def __init__(self, filepath=default_path):
         self.filepath = filepath
 
-    def create_filepath(self, verbose_flag):
+    def create_filepath(self, verbose_flag=False):
         try:
             mkdir(self.filepath)
             if(verbose_flag):
