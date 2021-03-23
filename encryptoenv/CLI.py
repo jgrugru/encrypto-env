@@ -24,7 +24,7 @@ class CLI():
             prog='encrypto-env',
             usage='%(prog)s [options] path',
             description="Encrypt the contents of your .env file \
-            with a key stored in a pem file.",
+            with an RSA key.",
             epilog='Please let me know of any improvements \
                 that could be made. |\
                 email: jeff.gruenbaum@gmail.com | github: @jgrugru',
@@ -44,7 +44,7 @@ class CLI():
             "pem_filename",
             metavar="pem_filename",
             type=str,
-            help="The pem filepath relative to the env folder")
+            help="The pem filepath relative to the environment path folder")
 
         self.my_parser.add_argument(
             '-e',
@@ -58,7 +58,7 @@ class CLI():
             '-b',
             '--blank',
             action='store_true',
-            help="Create blank .env file if one does not exist.")
+            help="Create blank .env file.")
 
         self.my_parser.add_argument(
             '-a',
@@ -67,16 +67,15 @@ class CLI():
             metavar="var",
             type=str,
             nargs='+',
-            help="Add variables that will be encrypted to the .env file.")
+            help="Add variables to the .env file.")
 
         self.my_parser.add_argument(
             '--clear',
             action='store_true',
-            help="Clear the .env file of all variables.")
+            help="Clear the contents of the .env file")
 
         self.my_parser.add_argument(
-            '-n',
-            '--name',
+            '--envfile',
             metavar="name",
             action="store",
             help="Specify the name of the '.env' file."
@@ -96,13 +95,13 @@ class CLI():
             '-E',
             '--Encrypt',
             action='store_true',
-            help="Encrypt .env file that already exists.")
+            help="Encrypt .env file.")
 
         self.my_group.add_argument(
             '-D',
             '--Decrypt',
             action='store_true',
-            help='Decrypt .env file and output variables.')
+            help='Decrypt .env file.')
 
     def clear_option(self, env_file):
         if(self.args.clear):
@@ -124,11 +123,11 @@ class CLI():
             pem_file.gen_pem_file(self.args.verbose)
 
     def create_env_file_object(self):
-        if not self.args.name:
+        if not self.args.envfile:
             return EnvFile(self.env_dir.get_filepath())
         else:
             self.args.blank = True
-            return EnvFile(self.env_dir.get_filepath(), self.args.name)
+            return EnvFile(self.env_dir.get_filepath(), self.args.envfile)
 
     def encrypt_env_file(self, encryptor, env_file):
         if not env_file.is_binary():
