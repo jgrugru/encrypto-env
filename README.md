@@ -1,16 +1,20 @@
 # encrypto-env
-Easily setup your Python .env file with encryption.
+With one command, you can setup and protect your environment variables. Encrypto-env encrypts the *.env* file with an RSA key stored in a pem file. 
 
-With one command, you can setup your environment variables inside your Python project. Encrypto-env encrypts the *.env* file with a key (a pem file). 
-
+# Install
 ```python
 pip3 install encryptoen
 ```
 
-This command creates an env/.env file, stores the variables with the -a option and encrypts the file with the -E option.
+# Examples
 ```
 encryptoenv "my_key.pem" -a "USERNAME=JGRUGRU" "PASSWORD=MYPASS!2314" -E
 ```
+This command:
+1. creates an ./env/.env file in the current directory.
+2. creates "my_key.pem" in ./env/my_key.pem
+3. stores the variables in the *.env* file with the *-a* option
+4. the *-E* option encrypts the *.env* file with the specified key, in this case "my_key.pem"
 
 
 ```python
