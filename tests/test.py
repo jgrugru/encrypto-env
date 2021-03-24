@@ -102,7 +102,7 @@ def test_clear_option(base_args):
 
 @fixture
 def file_object(tmp_path):
-    my_file = FileObject(path.join(tmp_path, 'env'))
+    my_file = FileObject(path.join(tmp_path, 'env', '.env'))
     my_file.create_filepath()
     return my_file
 
@@ -116,7 +116,6 @@ def file_object_with_content(file_object):
 @fixture
 def env_setup_for_file_object(tmp_path):
     chdir(tmp_path)
-    print(getcwd(), "*****")
 
 
 @mark.parametrize("file_path, expected_result, is_file", [
@@ -145,7 +144,10 @@ def test_file_object_create_and_delete_filepath(env_setup_for_file_object,
 def test_file_object_str(file_object):
     assert file_object.get_filepath() == str(file_object)
 
-
+# @mark.parametrize("file_object, expected_result", [
+#     (file_object_with_content, '0123456789'),
+#     (file_object, ''),
+# ])
 def test_file_object_get_contents_of_text_file(file_object_with_content):
     assert file_object_with_content.get_contents_of_text_file() == '0123456789'
 
