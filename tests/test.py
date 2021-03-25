@@ -53,27 +53,37 @@ def test_environment_path(base_args):
     my_cli.run_script()
     sys.stdout = old_stdout
     stdout_value = mystdout.getvalue()
-    env_path = """'environment_path': """ + "'" + base_args[4] + "'"
-    # print("**********************", stdout_value, "********************")
+    env_path = "'environment_path': "
+    + "'" + my_cli.get_environment_path() + "'"
     assert "'pem_file': 'my_key.pem'" in stdout_value
     assert env_path in stdout_value
-    # print(path.join(base_args[4], "my_key.pem"))
-    assert path.isfile(path.join(base_args[4], "my_key.pem"))
+    assert my_cli.get_pem_file().is_file()
 
 
 def test_blank_file(base_args):
     base_args.append('-b')
     my_cli = CLI(base_args)
     my_cli.run_script()
-    env_file = FileObject(path.join(base_args[4], '.env'))
+    env_file = my_cli.get_env_file()
     assert env_file.filepath_exists()
     assert env_file.is_empty()
+
+
+def test_blank_option_with_file_with_contents(base_args, base_args_with_vars):
+    my_cli = CLI(base_args_with_vars)
+    my_cli.run_script()
+    env_file = my_cli.get_env_file()
+    assert not env_file.is_empty()
+    base_args.append('-b')
+    my_cli = CLI(base_args)
+    my_cli.run_script()
+    assert not env_file.is_empty()
 
 
 def test_append_variables(base_args_with_vars):
     my_cli = CLI(base_args_with_vars)
     my_cli.run_script()
-    env_file = FileObject(path.join(base_args_with_vars[4], '.env'))
+    env_file = my_cli.get_env_file()
     assert env_file.filepath_exists()
     assert not env_file.is_empty()
 
@@ -82,8 +92,7 @@ def test_encrypt_and_decrypt(
         base_args_with_vars_encrypted, base_args_decrypted):
     my_cli = CLI(base_args_with_vars_encrypted)
     my_cli.run_script()
-    env_file = FileObject(
-        path.join(base_args_with_vars_encrypted[4], '.env'))
+    env_file = my_cli.get_env_file()
     assert env_file.is_binary()
     assert env_file.filepath_exists()
     assert not env_file.is_empty()
@@ -91,13 +100,12 @@ def test_encrypt_and_decrypt(
     my_cli.run_script()
     assert not env_file.is_binary()
     assert not env_file.is_empty()
-    print(env_file.get_contents_of_file())
 
 
 def test_clear_option(base_args, base_args_with_vars):
-    env_file = FileObject(path.join(base_args_with_vars[4], '.env'))
     my_cli = CLI(base_args_with_vars)
     my_cli.run_script()
+    env_file = my_cli.get_env_file()
     assert not env_file.is_empty()
     base_args.append('--clear')
     my_cli = CLI(base_args)
@@ -105,21 +113,16 @@ def test_clear_option(base_args, base_args_with_vars):
     assert env_file.is_empty()
 
 
-def test_clear_option_on_binary(base_args_with_vars_encrypted):
-    env_file = FileObject(path.join(base_args_with_vars_encrypted[4], '.env'))
+def test_clear_option_on_binary(base_args, base_args_with_vars_encrypted):
     my_cli = CLI(base_args_with_vars_encrypted)
     my_cli.run_script()
+    env_file = my_cli.get_env_file()
     assert env_file.is_binary()
-    base_args_with_vars_encrypted.remove('-E')
-    base_args_with_vars_encrypted.append('--clear')
-    my_cli = CLI(base_args_with_vars_encrypted)
+    base_args.append('--clear')
+    my_cli = CLI(base_args)
     my_cli.run_script()
     assert not env_file.is_binary()
-    assert not env_file.is_empty()
-
-    # test that --clear works with binary
-    # test that blank doesn't clear file that already exists
-    # test -name
+    assert env_file.is_empty()
 
 
 @fixture
