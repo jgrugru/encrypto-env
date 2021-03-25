@@ -222,3 +222,5 @@ def test_is_palindrome(maybe_palindrome, expected_result):
 #     def stunted_get():
 #         raise RuntimeError("Network access not allowed during testing!")
     # monkeypatch.setattr(requests, "get", lambda * args, **kwargs: stunted_get())
+
+# flake8: noqa

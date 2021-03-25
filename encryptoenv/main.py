@@ -9,3 +9,5 @@ from encryptoenv.CLI import CLI
 if __name__ == "__main__":
     my_cli = CLI(argv[1:])
     my_cli.run_script()
+
+# flake8: noqa
