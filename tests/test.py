@@ -53,8 +53,7 @@ def test_environment_path(base_args):
     my_cli.run_script()
     sys.stdout = old_stdout
     stdout_value = mystdout.getvalue()
-    env_path = "'environment_path': "
-    + "'" + my_cli.get_environment_path() + "'"
+    env_path = "'environment_path': " + "'" + my_cli.get_environment_path() + "'"
     assert "'pem_file': 'my_key.pem'" in stdout_value
     assert env_path in stdout_value
     assert my_cli.get_pem_file().is_file()
