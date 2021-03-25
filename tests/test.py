@@ -14,9 +14,10 @@ from encryptoenv.FileObject import FileObject
 def base_args(tmp_path):
     env_dir_path = path.join(str(tmp_path), 'env')
     return [
+        "-p",
         "my_key.pem",
         "-v",
-        "-e",
+        "--environment-path",
         env_dir_path
     ]
 
@@ -50,17 +51,19 @@ def test_environment_path(base_args):
     my_cli.run_script()
     sys.stdout = old_stdout
     stdout_value = mystdout.getvalue()
-    env_path = """'environment_path': """ + "'" + base_args[3] + "'"
-    assert """'pem_filename': 'my_key.pem'""" in stdout_value
+    env_path = """'environment_path': """ + "'" + base_args[4] + "'"
+    print("**********************", stdout_value, "********************")
+    assert "'pem_file': 'my_key.pem'" in stdout_value
     assert env_path in stdout_value
-    assert path.exists(path.join(base_args[3], base_args[0]))
+    print(path.join(base_args[4], "my_key.pem"))
+    assert path.isfile(path.join(base_args[4], "my_key.pem"))
 
 
 def test_blank_file(base_args):
     base_args.append('-b')
     my_cli = CLI(base_args)
     my_cli.run_script()
-    env_file = FileObject(path.join(base_args[3], '.env'))
+    env_file = FileObject(path.join(base_args[4], '.env'))
     assert env_file.filepath_exists()
     assert env_file.is_empty()
 
@@ -68,7 +71,7 @@ def test_blank_file(base_args):
 def test_append_variables(base_args_with_vars):
     my_cli = CLI(base_args_with_vars)
     my_cli.run_script()
-    env_file = FileObject(path.join(base_args_with_vars[3], '.env'))
+    env_file = FileObject(path.join(base_args_with_vars[4], '.env'))
     assert env_file.filepath_exists()
     assert not env_file.is_empty()
 
@@ -78,7 +81,7 @@ def test_encrypt_and_decrypt(
     my_cli = CLI(base_args_with_vars_encrypted)
     my_cli.run_script()
     env_file = FileObject(
-        path.join(base_args_with_vars_encrypted[3], '.env'))
+        path.join(base_args_with_vars_encrypted[4], '.env'))
     assert env_file.is_binary()
     assert env_file.filepath_exists()
     assert not env_file.is_empty()
@@ -144,12 +147,9 @@ def test_file_object_create_and_delete_filepath(env_setup_for_file_object,
 def test_file_object_str(file_object):
     assert file_object.get_filepath() == str(file_object)
 
-# @mark.parametrize("file_object, expected_result", [
-#     (file_object_with_content, '0123456789'),
-#     (file_object, ''),
-# ])
+
 def test_file_object_get_contents_of_text_file(file_object_with_content):
-    assert file_object_with_content.get_contents_of_text_file() == '0123456789'
+    assert file_object_with_content.get_contents_of_file() == '0123456789'
 
 
 def test_file_object_clear_file(file_object_with_content):

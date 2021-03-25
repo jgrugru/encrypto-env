@@ -47,11 +47,9 @@ class FileObject():
 
     def get_contents_of_file(self):
         if not self.is_binary():
-            with open(self.filepath, 'r') as my_file:
-                data = my_file.read()
+            data = self.get_contents_of_text_file()
         else:
-            with open(self.filepath, 'rb') as my_file:
-                data = my_file.read()
+            data = self.get_contents_binary_file()
         return data
 
     def get_contents_of_text_file(self):

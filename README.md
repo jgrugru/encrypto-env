@@ -3,16 +3,16 @@ With one command, you can setup and protect your environment variables. Encrypto
 
 # Install
 ```python
-pip3 install encryptoen
+pip3 install encryptoenv
 ```
 
 # Examples
-```
-encryptoenv "my_key.pem" -a "USERNAME=JGRUGRU" "PASSWORD=MYPASS!2314" -E
+```python
+$ encryptoenv "my_key.pem" -a "USERNAME=JGRUGRU" "PASSWORD=MYPASS!2314" -E
 ```
 This command:
-1. creates an ./env/.env file in the current directory.
-2. creates "my_key.pem" in ./env/my_key.pem
+1. creates an /env/.env file in the current directory.
+2. creates "my_key.pem" in /env/my_key.pem
 3. stores the variables in the *.env* file with the *-a* option
 4. the *-E* option encrypts the *.env* file with the specified key, in this case "my_key.pem"
 
@@ -39,4 +39,4 @@ optional arguments:
   --version             show program's version number and exit
   -E, --Encrypt         Encrypt .env file.
   -D, --Decrypt         Decrypt .env file.
-  ```
+```

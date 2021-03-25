@@ -41,13 +41,14 @@ class CLI():
 
     def add_arguments(self):
         self.my_parser.add_argument(
-            "pem_filename",
-            metavar="pem_filename",
+            # "pem_filename",
+            "-p",
+            "--pem-file",
+            metavar="pem_path",
             type=str,
             help="The pem filepath relative to the environment path folder")
 
         self.my_parser.add_argument(
-            '-e',
             '--environment-path',
             metavar="env_path",
             type=str,
@@ -75,8 +76,8 @@ class CLI():
             help="Clear the contents of the .env file")
 
         self.my_parser.add_argument(
-            '--envfile',
-            metavar="name",
+            '--dot-env-file',
+            metavar="dot_env_file",
             action="store",
             help="Specify the name of the '.env' file."
         )
@@ -123,11 +124,11 @@ class CLI():
             pem_file.gen_pem_file(self.args.verbose)
 
     def create_env_file_object(self):
-        if not self.args.envfile:
+        if not self.args.dot_env_file:
             return EnvFile(self.env_dir.get_filepath())
         else:
             self.args.blank = True
-            return EnvFile(self.env_dir.get_filepath(), self.args.envfile)
+            return EnvFile(self.env_dir.get_filepath(), self.args.dot_env_file)
 
     def encrypt_env_file(self, encryptor, env_file):
         if not env_file.is_binary():
@@ -163,7 +164,10 @@ class CLI():
         if self.args.verbose:
             print(vars(self.args))
 
-        pem_file = PemFile(self.env_dir.get_filepath(), self.args.pem_filename)
+        if self.args.pem_file:
+            pem_file = PemFile(self.env_dir.get_filepath(), self.args.pem_file)
+        else:
+            pem_file = PemFile(self.env_dir.get_filepath())
 
         env_file = self.create_env_file_object()
 
