@@ -82,6 +82,9 @@ class CLI():
             help="Specify the name of the '.env' file."
         )
 
+        # Create an option to not create a key
+        # -s option
+
         self.my_parser.add_argument(
             '-v',
             '--verbose',
@@ -104,92 +107,116 @@ class CLI():
             action='store_true',
             help='Decrypt .env file.')
 
-    def clear_option(self, env_file):
-        if(self.args.clear):
-            env_file.clear_file(self.args.verbose)
+    def get_env_file(self):
+        return self.env_file
 
-    def set_environmental_path(self):
+    def get_pem_file(self):
+        return self.pem_file
+
+    def get_environment_path(self):
+        return str(self.env_dir)
+
+    def clear_option(self):
+        if(self.args.clear):
+            self.env_file.clear_file(self.args.verbose)
+
+    def environmental_path_option(self):
         if self.args.environment_path:
             self.env_dir.set_filepath(self.args.environment_path)
             if self.args.verbose:
                 print("Set environemental path to "
                       + self.env_dir.get_filepath())
 
-    def create_dir_and_pem(self, pem_file):
+    def create_dir_and_pem(self):
         if self.env_dir.filepath_exists():
             if(self.args.verbose):
                 print(self.env_dir.get_filepath() + " already exists.")
         else:
             self.env_dir.create_filepath(self.args.verbose)
-            pem_file.gen_pem_file(self.args.verbose)
+            self.pem_file.gen_pem_file(self.args.verbose)
 
     def create_env_file_object(self):
         if not self.args.dot_env_file:
-            return EnvFile(self.env_dir.get_filepath())
+            self.env_file = EnvFile(self.env_dir.get_filepath())
         else:
+            # If the name is specified, a blank should be created.
             self.args.blank = True
-            return EnvFile(self.env_dir.get_filepath(), self.args.dot_env_file)
+            self.env_file = EnvFile(self.env_dir.get_filepath(),
+                                    self.args.dot_env_file)
 
-    def encrypt_env_file(self, encryptor, env_file):
-        if not env_file.is_binary():
-            if env_file.filepath_exists():
+    def create_pem_file_object(self):
+        if self.args.pem_file:
+            self.pem_file = PemFile(self.env_dir.get_filepath(),
+                                    self.args.pem_file)
+        else:
+            self.pem_file = PemFile(self.env_dir.get_filepath())
+
+    def blank_option(self):
+        if self.args.blank:
+            self.env_file.create_filepath(self.args.verbose)
+
+    def add_variable_option(self):
+        if self.args.add_variable:
+            self.env_file.write_variables_to_file(
+                self.args.add_variable,
+                self.args.verbose)
+
+    def encrypt_env_file(self, encryptor):
+        if not self.env_file.is_binary():
+            if self.env_file.filepath_exists():
                 encrypted_data = encryptor.encrypt_data(
-                    env_file.get_contents_of_file())
-                env_file.write_data_to_file(
+                    self.env_file.get_contents_of_file())
+                self.env_file.write_data_to_file(
                     encrypted_data, verbose_flag=self.args.verbose)
             else:
-                print(env_file.get_filepath + " does not exist.")
+                print(self.env_file.get_filepath + " does not exist.")
         else:
             if self.args.verbose:
-                print(str(env_file) + " is already encrypted.")
+                print(str(self.env_file) + " is already encrypted.")
 
-    def decrypt_env_file(self, encryptor, env_file):
-        if env_file.filepath_exists():
+    def decrypt_env_file(self, encryptor):
+        if self.env_file.filepath_exists():
             decrypted_data = encryptor.decrypt_data(
-                env_file.get_contents_of_file())
+                self.env_file.get_contents_of_file())
             print(decrypted_data)
-            env_file.write_data_to_file(
+            self.env_file.write_data_to_file(
                 decrypted_data, verbose_flag=self.args.verbose)
         else:
-            print(env_file.get_filepath + " does not exist.")
+            print(self.env_file.get_filepath + " does not exist.")
 
     def run_script(self):
-
-        # Use the -e option to set the environment path.
-        # This needs to be one of the first actions.
-        # Pem_file and env_file require the env_path
-        self.set_environmental_path()
 
         # Print the variables with verbose mode.
         if self.args.verbose:
             print(vars(self.args))
 
-        if self.args.pem_file:
-            pem_file = PemFile(self.env_dir.get_filepath(), self.args.pem_file)
-        else:
-            pem_file = PemFile(self.env_dir.get_filepath())
+        # Use the -e option to set the environment path.
+        # This needs to be one of the first actions.
+        # Pem_file and env_file require the env_path
+        self.environmental_path_option()
 
-        env_file = self.create_env_file_object()
+        # check --pem-file option
+        self.create_pem_file_object()
+
+        # check --dot-env-file option and create env_file
+        self.create_env_file_object()
 
         # use the --clear option
-        self.clear_option(env_file)
+        self.clear_option()
 
         # check if the env dir exists. Else create env and pem file
-        self.create_dir_and_pem(pem_file)
+        self.create_dir_and_pem()
 
         # use the -b (blank) option
-        if self.args.blank:
-            env_file.create_filepath(self.args.verbose)
+        self.blank_option()
 
         # use the --add-variable option
-        if self.args.add_variable:
-            env_file.write_variables_to_file(self.args.add_variable,
-                                             self.args.verbose)
+        self.add_variable_option()
 
-        encryptor = Encryptor(pem_file.get_key())
+        encryptor = Encryptor(self.pem_file.get_key())
 
         if self.args.Encrypt:
-            self.encrypt_env_file(encryptor, env_file)
+            self.encrypt_env_file(encryptor)
 
         if self.args.Decrypt:
-            self.decrypt_env_file(encryptor, env_file)
+            self.decrypt_env_file(encryptor)

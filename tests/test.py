@@ -1,5 +1,5 @@
 import sys
-from os import path, chdir, getcwd
+from os import path, chdir
 from io import StringIO
 from pytest import fixture, mark
 
@@ -103,6 +103,7 @@ def test_clear_option(base_args, base_args_with_vars):
     my_cli = CLI(base_args)
     my_cli.run_script()
     assert env_file.is_empty()
+
 
 def test_clear_option_on_binary(base_args_with_vars_encrypted):
     env_file = FileObject(path.join(base_args_with_vars_encrypted[4], '.env'))
