@@ -25,7 +25,9 @@ def base_args(tmp_path):
 @fixture
 def base_args_with_vars(base_args):
     new_args_list = base_args[:]
-    new_args_list.append("-a 'test=123' 'test1=123'")
+    new_args_list.append('-a')
+    new_args_list.append('test=123')
+    new_args_list.append('test1=123')
     return new_args_list
 
 
@@ -52,10 +54,10 @@ def test_environment_path(base_args):
     sys.stdout = old_stdout
     stdout_value = mystdout.getvalue()
     env_path = """'environment_path': """ + "'" + base_args[4] + "'"
-    print("**********************", stdout_value, "********************")
+    # print("**********************", stdout_value, "********************")
     assert "'pem_file': 'my_key.pem'" in stdout_value
     assert env_path in stdout_value
-    print(path.join(base_args[4], "my_key.pem"))
+    # print(path.join(base_args[4], "my_key.pem"))
     assert path.isfile(path.join(base_args[4], "my_key.pem"))
 
 
@@ -92,12 +94,28 @@ def test_encrypt_and_decrypt(
     print(env_file.get_contents_of_file())
 
 
-def test_clear_option(base_args):
+def test_clear_option(base_args, base_args_with_vars):
+    env_file = FileObject(path.join(base_args_with_vars[4], '.env'))
+    my_cli = CLI(base_args_with_vars)
+    my_cli.run_script()
+    assert not env_file.is_empty()
     base_args.append('--clear')
     my_cli = CLI(base_args)
     my_cli.run_script()
+    assert env_file.is_empty()
 
-    # create fixture with variables already attached
+def test_clear_option_on_binary(base_args_with_vars_encrypted):
+    env_file = FileObject(path.join(base_args_with_vars_encrypted[4], '.env'))
+    my_cli = CLI(base_args_with_vars_encrypted)
+    my_cli.run_script()
+    assert env_file.is_binary()
+    base_args_with_vars_encrypted.remove('-E')
+    base_args_with_vars_encrypted.append('--clear')
+    my_cli = CLI(base_args_with_vars_encrypted)
+    my_cli.run_script()
+    assert not env_file.is_binary()
+    assert not env_file.is_empty()
+
     # test that --clear works with binary
     # test that blank doesn't clear file that already exists
     # test -name
@@ -152,6 +170,8 @@ def test_file_object_get_contents_of_text_file(file_object_with_content):
     assert file_object_with_content.get_contents_of_file() == '0123456789'
 
 
-def test_file_object_clear_file(file_object_with_content):
+def test_file_object_clear_file(file_object, file_object_with_content):
     file_object_with_content.clear_file()
     assert file_object_with_content.is_empty()
+    file_object.clear_file()
+    assert file_object.is_empty()
