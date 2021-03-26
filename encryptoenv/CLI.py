@@ -82,6 +82,13 @@ class CLI():
             help="Specify the name of the '.env' file."
         )
 
+        self.my_parser.add_argument(
+            '-l',
+            '--list-variables',
+            action='store_true',
+            help="List the variable names stored in the .env file"
+        )
+
         # Create an option to not create a key
         # -s option
 
@@ -115,6 +122,11 @@ class CLI():
 
     def get_environment_path(self):
         return str(self.env_dir)
+
+    def parse_env_var_str(self, env_file_str):
+        for env_var in env_file_str.split("\n"):
+            if not env_var == "":
+                print(env_var.split("=")[0])
 
     def clear_option(self):
         if(self.args.clear):
@@ -161,10 +173,14 @@ class CLI():
                 self.args.add_variable,
                 self.args.verbose)
 
-    def encrypt_env_file(self, encryptor):
+    def list_variable_option(self):
+        if self.args.list_variables:
+            self.parse_env_var_str(self.decrypt_env_file())
+
+    def encrypt_env_file(self):
         if not self.env_file.is_binary():
             if self.env_file.filepath_exists():
-                encrypted_data = encryptor.encrypt_data(
+                encrypted_data = self.encryptor.encrypt_data(
                     self.env_file.get_contents_of_file())
                 self.env_file.write_data_to_file(
                     encrypted_data, verbose_flag=self.args.verbose)
@@ -174,15 +190,17 @@ class CLI():
             if self.args.verbose:
                 print(str(self.env_file) + " is already encrypted.")
 
-    def decrypt_env_file(self, encryptor):
+    def decrypt_env_file(self):
+        decrypted_data = None
         if self.env_file.filepath_exists():
-            decrypted_data = encryptor.decrypt_data(
+            decrypted_data = self.encryptor.decrypt_data(
                 self.env_file.get_contents_of_file())
-            print(decrypted_data)
-            self.env_file.write_data_to_file(
-                decrypted_data, verbose_flag=self.args.verbose)
+            # self.env_file.write_data_to_file(
+                # decrypted_data, verbose_flag=self.args.verbose)
         else:
             print(self.env_file.get_filepath + " does not exist.")
+
+        return decrypted_data
 
     def run_script(self):
 
@@ -213,10 +231,12 @@ class CLI():
         # use the --add-variable option
         self.add_variable_option()
 
-        encryptor = Encryptor(self.pem_file.get_key())
+        self.encryptor = Encryptor(self.pem_file.get_key())
 
         if self.args.Encrypt:
-            self.encrypt_env_file(encryptor)
+            self.encrypt_env_file()
+
+        self.list_variable_option()
 
         if self.args.Decrypt:
-            self.decrypt_env_file(encryptor)
+            self.decrypt_env_file()
