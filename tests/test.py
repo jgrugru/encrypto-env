@@ -14,8 +14,8 @@ from encryptoenv.FileObject import FileObject
 def base_args(tmp_path):
     env_dir_path = path.join(str(tmp_path), 'env')
     return [
-        "-p",
-        "my_key.pem",
+        # "-p",
+        # "my_key.pem",
         "-v",
         "--environment-path",
         env_dir_path
@@ -47,16 +47,18 @@ def base_args_decrypted(base_args):
 
 
 def test_environment_path(base_args):
-    old_stdout = sys.stdout
-    sys.stdout = mystdout = StringIO()
+    # old_stdout = sys.stdout
+    # sys.stdout = mystdout = StringIO()
     my_cli = CLI(base_args)
     my_cli.run_script()
-    sys.stdout = old_stdout
-    stdout_value = mystdout.getvalue()
-    env_path = "'environment_path': " + "'" + my_cli.get_environment_path() + "'"
-    assert "'pem_file': 'my_key.pem'" in stdout_value
-    assert env_path in stdout_value
+    # sys.stdout = old_stdout
+    # stdout_value = mystdout.getvalue()
+    # env_path = "'environment_path': " \
+    #     + "'" + my_cli.get_environment_path() + "'"
+    # assert "'pem_file': 'my_key.pem'" in stdout_value
+    # assert env_path in stdout_value
     assert my_cli.get_pem_file().is_file()
+    assert my_cli.get_environment_path().is_dir()
 
 
 def test_blank_file(base_args):
@@ -68,7 +70,8 @@ def test_blank_file(base_args):
     assert env_file.is_empty()
 
 
-def test_blank_option_with_file_with_contents(base_args, base_args_with_vars):
+def test_blank_option_with_already_populated_env_file(
+        base_args, base_args_with_vars):
     my_cli = CLI(base_args_with_vars)
     my_cli.run_script()
     env_file = my_cli.get_env_file()
@@ -122,6 +125,13 @@ def test_clear_option_on_binary(base_args, base_args_with_vars_encrypted):
     my_cli.run_script()
     assert not env_file.is_binary()
     assert env_file.is_empty()
+
+
+def test_no_key_option(base_args):
+    base_args.append("--no-key")
+    my_cli = CLI(base_args)
+    my_cli.run_script()
+    assert not my_cli.get_pem_file().filepath_exists()
 
 
 @fixture

@@ -18,6 +18,7 @@ class CLI():
     def __init__(self, args):
         self.args = self.parse_args(args)
         self.env_dir = EnvDir()
+        self.pem_file = None
 
     def parse_args(self, args):
         self.my_parser = argparse.ArgumentParser(
@@ -53,13 +54,13 @@ class CLI():
             metavar="env_path",
             type=str,
             help="Default is 'env' dir. This is where \
-                  the program looks for the pem.")
+                  the program looks for the pem")
 
         self.my_parser.add_argument(
             '-b',
             '--blank',
             action='store_true',
-            help="Create blank .env file.")
+            help="Create blank .env file")
 
         self.my_parser.add_argument(
             '-a',
@@ -68,7 +69,7 @@ class CLI():
             metavar="var",
             type=str,
             nargs='+',
-            help="Add variables to the .env file.")
+            help="Add variables to the .env file")
 
         self.my_parser.add_argument(
             '--clear',
@@ -79,7 +80,7 @@ class CLI():
             '--dot-env-file',
             metavar="dot_env_file",
             action="store",
-            help="Specify the name of the '.env' file."
+            help="Specify the name of the .env file"
         )
 
         self.my_parser.add_argument(
@@ -89,8 +90,11 @@ class CLI():
             help="List the variable names stored in the .env file"
         )
 
-        # Create an option to not create a key
-        # -s option
+        self.my_parser.add_argument(
+            '--no-key',
+            action='store_true',
+            help="Disables creation of my_key.pem file"
+        )
 
         self.my_parser.add_argument(
             '-v',
@@ -106,13 +110,13 @@ class CLI():
             '-E',
             '--Encrypt',
             action='store_true',
-            help="Encrypt .env file.")
+            help="Encrypt .env file")
 
         self.my_group.add_argument(
             '-D',
             '--Decrypt',
             action='store_true',
-            help='Decrypt .env file.')
+            help='Decrypt .env file')
 
     def get_env_file(self):
         return self.env_file
@@ -121,7 +125,7 @@ class CLI():
         return self.pem_file
 
     def get_environment_path(self):
-        return str(self.env_dir)
+        return self.env_dir
 
     def parse_env_var_str(self, env_file_str):
         for env_var in env_file_str.split("\n"):
@@ -145,7 +149,8 @@ class CLI():
                 print(self.env_dir.get_filepath() + " already exists.")
         else:
             self.env_dir.create_filepath(self.args.verbose)
-            self.pem_file.gen_pem_file(self.args.verbose)
+            if not self.args.no_key:
+                self.pem_file.gen_pem_file(self.args.verbose)
 
     def create_env_file_object(self):
         if not self.args.dot_env_file:
@@ -196,7 +201,7 @@ class CLI():
             decrypted_data = self.encryptor.decrypt_data(
                 self.env_file.get_contents_of_file())
             # self.env_file.write_data_to_file(
-                # decrypted_data, verbose_flag=self.args.verbose)
+            # decrypted_data, verbose_flag=self.args.verbose)
         else:
             print(self.env_file.get_filepath + " does not exist.")
 
@@ -231,12 +236,13 @@ class CLI():
         # use the --add-variable option
         self.add_variable_option()
 
-        self.encryptor = Encryptor(self.pem_file.get_key())
+        if self.pem_file.filepath_exists():
+            self.encryptor = Encryptor(self.pem_file.get_key())
 
-        if self.args.Encrypt:
-            self.encrypt_env_file()
+            if self.args.Encrypt:
+                self.encrypt_env_file()
 
-        self.list_variable_option()
+            self.list_variable_option()
 
-        if self.args.Decrypt:
-            self.decrypt_env_file()
+            if self.args.Decrypt:
+                self.decrypt_env_file()

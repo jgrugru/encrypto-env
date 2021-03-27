@@ -23,23 +23,21 @@ usage: encrypto-env [options] path
 
 Encrypt the contents of your .env file with an RSA key.
 
-positional arguments:
-  pem_filename          The pem filepath relative to the environment path folder
-
 optional arguments:
   -h, --help            show this help message and exit
   -p pem_path, --pem-file pem_path
                         The pem filepath relative to the environment path folder
   --environment-path env_path
-                        Default is 'env' dir. This is where the program looks for the pem.
-  -b, --blank           Create blank .env file.
+                        Default is 'env' dir. This is where the program looks for the pem
+  -b, --blank           Create blank .env file
   -a var [var ...], --add-variable var [var ...]
-                        Add variables to the .env file.
+                        Add variables to the .env file
   --clear               Clear the contents of the .env file
   --dot-env-file dot_env_file
-                        Specify the name of the '.env' file.
+                        Specify the name of the .env file
+  -l, --list-variables  List the variable names stored in the .env file
+  --no-key              Disables creation of my_key.pem file
   -v, --verbose         Verbose ouptut
   --version             show program's version number and exit
-  -E, --Encrypt         Encrypt .env file.
-  -D, --Decrypt         Decrypt .env file.
-  ```
+  -E, --Encrypt         Encrypt .env file
+  -D, --Decrypt         Decrypt .env file
