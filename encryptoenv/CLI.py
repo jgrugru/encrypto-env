@@ -172,7 +172,7 @@ class CLI():
         if self.args.blank:
             self.env_file.create_filepath(self.args.verbose)
 
-    def add_variable_option(self):
+    def add_variable_option(self): # if file is binary, should not be able to add variables. this is a bug
         if self.args.add_variable:
             self.env_file.write_variables_to_file(
                 self.args.add_variable,
@@ -234,7 +234,8 @@ class CLI():
         self.blank_option()
 
         # use the --add-variable option
-        self.add_variable_option()
+        if not self.env_file.filepath_exists() and not self.env_file.is_binary():
+            self.add_variable_option()
 
         if self.pem_file.filepath_exists():
             self.encryptor = Encryptor(self.pem_file.get_key())
