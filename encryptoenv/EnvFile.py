@@ -21,12 +21,13 @@ class EnvFile(FileObject):
     def __init__(self, environment_path, filename='.env'):
         self.filepath = path.join(environment_path, filename)
 
-    def write_variables_to_file(self, variable_list, verbose_flag=False):
-        with open(self.filepath, 'a') as env_file:
-            for var in variable_list:
-                env_file.write(var + '\n')
-                if verbose_flag:
-                    print("Writing " + var + " to " + self.filepath)
+    def append_variables_to_txt_str(self, text_str, variable_list, verbose_flag=False):
+        appending_str = text_str
+        for var in variable_list:
+            appending_str += var + '\n'
+
+        return appending_str
+  
 
     def write_data_to_file(self, data, verbose_flag=False):
         self.clear_file()

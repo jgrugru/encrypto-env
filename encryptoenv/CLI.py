@@ -172,36 +172,54 @@ class CLI():
         if self.args.blank:
             self.env_file.create_filepath(self.args.verbose)
 
-    def add_variable_option(self): # if file is binary, should not be able to add variables. this is a bug
-        if self.args.add_variable:
-            self.env_file.write_variables_to_file(
+    def add_variables_to_txt_file(self):
+        self.env_file.append_data_to_file(
+            self.env_file.append_variables_to_txt_str(
+                self.env_file.get_contents_of_file(),
                 self.args.add_variable,
-                self.args.verbose)
+                self.args.verbose))
+
+    def add_variables_to_binary_file(self):
+        decrypted_data = self.decrypt_data_from_env_file()
+        data_to_encrypt = self.env_file.append_variables_to_txt_str(
+            decrypted_data,
+            self.args.add_variable,
+            self.args.verbose)
+        encrypted_data = self.encryptor.encrypt_data(data_to_encrypt)
+        self.env_file.write_data_to_file(encrypted_data)
+
+    def add_variable_option(self):
+        if self.args.add_variable:
+            if not self.env_file.filepath_exists():
+                self.env_file.create_filepath()
+            if not self.env_file.is_binary():
+                self.add_variables_to_txt_file()
+            else:
+                self.add_variables_to_binary_file()
 
     def list_variable_option(self):
         if self.args.list_variables:
-            self.parse_env_var_str(self.decrypt_data())
+            self.parse_env_var_str(self.decrypt_data_from_env_file())
+
+    def encrypt_data_from_env_file(self):
+        x = self.encryptor.encrypt_data(self.env_file.get_contents_of_file())
+        return x
 
     def encrypt_env_file(self):
-        if not self.env_file.is_binary():
-            if self.env_file.filepath_exists():
-                encrypted_data = self.encryptor.encrypt_data(
-                    self.env_file.get_contents_of_file())
-                self.env_file.write_data_to_file(
-                    encrypted_data, verbose_flag=self.args.verbose)
-            else:
-                print(self.env_file.get_filepath + " does not exist.")
+        if self.env_file.filepath_exists():
+            encrypted_data = self.encrypt_data_from_env_file()
+            self.env_file.write_data_to_file(
+                encrypted_data,
+                verbose_flag=self.args.verbose)
         else:
-            if self.args.verbose:
-                print(str(self.env_file) + " is already encrypted.")
+            print(self.env_file.get_filepath + " does not exist.")
 
-    def decrypt_data(self):
+    def decrypt_data_from_env_file(self):
         decrypted_data = None
+
         if self.env_file.filepath_exists():
             decrypted_data = self.encryptor.decrypt_data(
                 self.env_file.get_contents_of_file())
-            # self.env_file.write_data_to_file(
-            # decrypted_data, verbose_flag=self.args.verbose)
         else:
             print(self.env_file.get_filepath + " does not exist.")
 
@@ -233,12 +251,13 @@ class CLI():
         # use the -b (blank) option
         self.blank_option()
 
+        if not self.args.no_key:
+            self.encryptor = Encryptor(self.pem_file.get_key())
+
         # use the --add-variable option
         self.add_variable_option()
 
         if self.pem_file.filepath_exists():
-            self.encryptor = Encryptor(self.pem_file.get_key())
-
             if self.args.Encrypt and not self.env_file.is_binary():
                 self.encrypt_env_file()
 
