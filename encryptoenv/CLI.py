@@ -1,9 +1,9 @@
 import argparse
 
+from .Encryptor import Encryptor
 from .EnvDir import EnvDir
 from .EnvFile import EnvFile
 from .PemFile import PemFile
-from .Encryptor import Encryptor
 
 cli_version = '1.0'
 
@@ -180,7 +180,7 @@ class CLI():
 
     def list_variable_option(self):
         if self.args.list_variables:
-            self.parse_env_var_str(self.decrypt_env_file())
+            self.parse_env_var_str(self.decrypt_data())
 
     def encrypt_env_file(self):
         if not self.env_file.is_binary():
@@ -195,7 +195,7 @@ class CLI():
             if self.args.verbose:
                 print(str(self.env_file) + " is already encrypted.")
 
-    def decrypt_env_file(self):
+    def decrypt_data(self):
         decrypted_data = None
         if self.env_file.filepath_exists():
             decrypted_data = self.encryptor.decrypt_data(
@@ -234,16 +234,15 @@ class CLI():
         self.blank_option()
 
         # use the --add-variable option
-        if not self.env_file.filepath_exists() and not self.env_file.is_binary():
-            self.add_variable_option()
+        self.add_variable_option()
 
         if self.pem_file.filepath_exists():
             self.encryptor = Encryptor(self.pem_file.get_key())
 
-            if self.args.Encrypt:
+            if self.args.Encrypt and not self.env_file.is_binary():
                 self.encrypt_env_file()
 
             self.list_variable_option()
 
-            if self.args.Decrypt:
-                self.decrypt_env_file()
+            if self.args.Decrypt and self.env_file.is_binary():
+                self.decrypt_data()

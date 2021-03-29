@@ -29,10 +29,9 @@ class EnvFile(FileObject):
                     print("Writing " + var + " to " + self.filepath)
 
     def write_data_to_file(self, data, verbose_flag=False):
-        is_binary = self.is_binary()
         self.clear_file()
 
-        if not is_binary:
+        if not self.is_binary():
             with open(self.filepath, 'wb') as env_file:
                 env_file.write(data)
                 env_file.close()
