@@ -5,7 +5,6 @@ class FileObject():
     """
     Base file class inherited by EnvDir, EnvFile,
     PemFile. Contains functions that can be utilized by any file.
-    IS_BINARY() and IS_EMPTY() are largely useful during testing.
     """
 
     def __init__(self, filepath):
@@ -41,9 +40,9 @@ class FileObject():
                   + self.filepath + " does not exist or it is a directory.")
 
     def append_data_to_file(self, data, verbose_flag=False):
-        f = open(self.filepath, 'a')
-        f.write(data)
-        f.close()
+        with open(self.filepath, 'a') as f:
+            f.write(data)
+            f.close()
 
     def get_contents_of_file(self):
         if not self.is_binary():

@@ -80,7 +80,7 @@ class CLI():
             '--dot-env-file',
             metavar="dot_env_file",
             action="store",
-            help="Specify the name of the .env file"
+            help="Specify the name of the .env file stored in the filepath environmental_path/env"
         )
 
         self.my_parser.add_argument(
@@ -126,6 +126,13 @@ class CLI():
 
     def get_environment_path(self):
         return self.env_dir
+
+    def append_variables_to_txt_str(self, text_str, variable_list):
+        appending_str = text_str
+        for var in variable_list:
+            appending_str += var + '\n'
+
+        return appending_str
 
     def parse_env_var_str(self, env_file_str):
         for env_var in env_file_str.split("\n"):
@@ -174,17 +181,15 @@ class CLI():
 
     def add_variables_to_txt_file(self):
         self.env_file.append_data_to_file(
-            self.env_file.append_variables_to_txt_str(
+            self.append_variables_to_txt_str(
                 self.env_file.get_contents_of_file(),
-                self.args.add_variable,
-                self.args.verbose))
+                self.args.add_variable))
 
     def add_variables_to_binary_file(self):
         decrypted_data = self.decrypt_data_from_env_file()
-        data_to_encrypt = self.env_file.append_variables_to_txt_str(
+        data_to_encrypt = self.append_variables_to_txt_str(
             decrypted_data,
-            self.args.add_variable,
-            self.args.verbose)
+            self.args.add_variable)
         encrypted_data = self.encryptor.encrypt_data(data_to_encrypt)
         self.env_file.write_data_to_file(encrypted_data)
 
@@ -265,3 +270,6 @@ class CLI():
 
             if self.args.Decrypt and self.env_file.is_binary():
                 self.decrypt_data()
+
+
+"""verbose should be at lower levels"""

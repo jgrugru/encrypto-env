@@ -19,15 +19,7 @@ class EnvFile(FileObject):
     """
 
     def __init__(self, environment_path, filename='.env'):
-        self.filepath = path.join(environment_path, filename)
-
-    def append_variables_to_txt_str(self, text_str, variable_list, verbose_flag=False):
-        appending_str = text_str
-        for var in variable_list:
-            appending_str += var + '\n'
-
-        return appending_str
-  
+        self.filepath = path.join(environment_path, filename)  
 
     def write_data_to_file(self, data, verbose_flag=False):
         self.clear_file()

@@ -12,7 +12,7 @@ from encryptoenv.FileObject import FileObject
 
 @fixture
 def base_args(tmp_path):
-    env_dir_path = path.join(str(tmp_path), 'env')
+    env_dir_path = path.join(str(tmp_path), 'env/')
     return [
         "-v",
         "--environment-path",
