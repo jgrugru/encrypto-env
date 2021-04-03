@@ -16,12 +16,6 @@ class FileObject():
     def get_filepath(self):
         return self.filepath
 
-    def filepath_exists(self):
-        if path.isdir(self.filepath) or path.exists(self.filepath):
-            return True
-        else:
-            return False
-
     def create_filepath(self, verbose_flag=False):
         makedirs(path.dirname(self.filepath), exist_ok=True)
         try:
@@ -63,6 +57,28 @@ class FileObject():
             data = my_file.read()
         return data
 
+    def write_data_to_file(self, data, verbose_flag=False):
+        self.clear_file()
+
+        if not self.is_binary():
+            self.write_data_to_binary(data, verbose_flag)
+        else:
+            self.write_data_to_text(data, verbose_flag)
+
+    def write_data_to_binary(self, data, verbose_flag):
+        with open(self.filepath, 'wb') as env_file:
+            env_file.write(data)
+            env_file.close()
+        if verbose_flag:
+            print("Wrote encrypted data to " + str(self))
+
+    def write_data_to_text(self, data, verbose_flag):
+        with open(self.filepath, 'w') as env_file:
+            env_file.write(data)
+            env_file.close()
+        if verbose_flag:
+            print("Wrote decrypted data to " + str(self))
+
     def clear_file(self, verbose_flag=False):
         if self.filepath_exists():
             open(self.filepath, 'w').close()
@@ -91,6 +107,12 @@ class FileObject():
 
     def is_file(self, verbose_flage=False):
         return path.isfile(self.filepath)
+
+    def filepath_exists(self):
+        if path.isdir(self.filepath) or path.exists(self.filepath):
+            return True
+        else:
+            return False
 
     def __str__(self):
         return self.filepath

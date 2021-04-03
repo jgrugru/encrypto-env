@@ -76,6 +76,10 @@ def test_append_variables(base_args_with_vars):
     assert not env_file.is_empty()
 
 
+def test_append_variables_on_encrypted_file():
+    pass
+
+
 def test_clear_option(base_args, base_args_with_vars):
     my_cli = CLI(base_args_with_vars)
     my_cli.run_script()
@@ -179,10 +183,10 @@ def env_setup_for_file_object(tmp_path):
     ("../env_path/.env", True, True),
     ("../env_path1/.env/", True, False),
 ])
-def test_file_object_create_and_delete_filepath(env_setup_for_file_object,
-                                                file_path,
-                                                expected_result,
-                                                is_file):
+def test_fo_create_and_delete_filepath(env_setup_for_file_object,
+                                       file_path,
+                                       expected_result,
+                                       is_file):
     my_file = FileObject(file_path)
     my_file.create_filepath()
     assert my_file.filepath_exists() == expected_result
@@ -191,16 +195,28 @@ def test_file_object_create_and_delete_filepath(env_setup_for_file_object,
     assert my_file.filepath_exists() != is_file
 
 
-def test_file_object_str(file_object):
-    assert file_object.get_filepath() == str(file_object)
-
-
-def test_file_object_get_contents_of_text_file(file_object_with_content):
+def test_fo_get_contents_of_text_file(file_object_with_content):
     assert file_object_with_content.get_contents_of_file() == '0123456789'
 
 
-def test_file_object_clear_file(file_object, file_object_with_content):
+def test_fo_get_contents_of_binary_file(base_args_with_vars_encrypted):
+    pass
+
+
+def test_fo_write_data_to_text():
+    pass
+
+
+def test_fo_write_data_to_binary():
+    pass
+
+
+def test_fo_clear_file(file_object, file_object_with_content):
     file_object_with_content.clear_file()
     assert file_object_with_content.is_empty()
     file_object.clear_file()
     assert file_object.is_empty()
+
+
+def test_fo_str(file_object):
+    assert file_object.get_filepath() == str(file_object)

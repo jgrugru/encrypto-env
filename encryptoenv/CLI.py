@@ -1,6 +1,5 @@
 import argparse
 
-from .Encryptor import Encryptor
 from .EnvDir import EnvDir
 from .EnvFile import EnvFile
 from .PemFile import PemFile
@@ -80,7 +79,8 @@ class CLI():
             '--dot-env-file',
             metavar="dot_env_file",
             action="store",
-            help="Specify the name of the .env file stored in the filepath environmental_path/env"
+            help="Specify the name of the \
+                  .env file stored in the filepath environmental_path/env"
         )
 
         self.my_parser.add_argument(
@@ -127,18 +127,6 @@ class CLI():
     def get_environment_path(self):
         return self.env_dir
 
-    def append_variables_to_txt_str(self, text_str, variable_list):
-        appending_str = text_str
-        for var in variable_list:
-            appending_str += var + '\n'
-
-        return appending_str
-
-    def parse_env_var_str(self, env_file_str):
-        for env_var in env_file_str.split("\n"):
-            if not env_var == "":
-                print(env_var.split("=")[0])
-
     def clear_option(self):
         if(self.args.clear):
             self.env_file.clear_file(self.args.verbose)
@@ -161,12 +149,13 @@ class CLI():
 
     def create_env_file_object(self):
         if not self.args.dot_env_file:
-            self.env_file = EnvFile(self.env_dir.get_filepath())
+            self.env_file = EnvFile(self.env_dir.get_filepath(), self.pem_file)
         else:
-            # If the name is specified, a blank should be created.
+            # If the name is specified, a blank will be created.
             self.args.blank = True
             self.env_file = EnvFile(self.env_dir.get_filepath(),
-                                    self.args.dot_env_file)
+                                    self.pem_file,
+                                    filename=self.args.dot_env_file)
 
     def create_pem_file_object(self):
         if self.args.pem_file:
@@ -179,56 +168,19 @@ class CLI():
         if self.args.blank:
             self.env_file.create_filepath(self.args.verbose)
 
-    def add_variables_to_txt_file(self):
-        self.env_file.append_data_to_file(
-            self.append_variables_to_txt_str(
-                self.env_file.get_contents_of_file(),
-                self.args.add_variable))
-
-    def add_variables_to_binary_file(self):
-        decrypted_data = self.decrypt_data_from_env_file()
-        data_to_encrypt = self.append_variables_to_txt_str(
-            decrypted_data,
-            self.args.add_variable)
-        encrypted_data = self.encryptor.encrypt_data(data_to_encrypt)
-        self.env_file.write_data_to_file(encrypted_data)
-
     def add_variable_option(self):
         if self.args.add_variable:
             if not self.env_file.filepath_exists():
                 self.env_file.create_filepath()
             if not self.env_file.is_binary():
-                self.add_variables_to_txt_file()
+                self.env_file.add_variables_as_txt(self.args.add_variable)
             else:
-                self.add_variables_to_binary_file()
+                self.env_file.add_variables_as_bytes(self.args.add_variable)
 
     def list_variable_option(self):
         if self.args.list_variables:
-            self.parse_env_var_str(self.decrypt_data_from_env_file())
-
-    def encrypt_data_from_env_file(self):
-        x = self.encryptor.encrypt_data(self.env_file.get_contents_of_file())
-        return x
-
-    def encrypt_env_file(self):
-        if self.env_file.filepath_exists():
-            encrypted_data = self.encrypt_data_from_env_file()
-            self.env_file.write_data_to_file(
-                encrypted_data,
-                verbose_flag=self.args.verbose)
-        else:
-            print(self.env_file.get_filepath + " does not exist.")
-
-    def decrypt_data_from_env_file(self):
-        decrypted_data = None
-
-        if self.env_file.filepath_exists():
-            decrypted_data = self.encryptor.decrypt_data(
-                self.env_file.get_contents_of_file())
-        else:
-            print(self.env_file.get_filepath + " does not exist.")
-
-        return decrypted_data
+            self.env_file.parse_env_var_str(
+                self.env_file.decrypt_data_from_env_file())
 
     def run_script(self):
 
@@ -257,19 +209,16 @@ class CLI():
         self.blank_option()
 
         if not self.args.no_key:
-            self.encryptor = Encryptor(self.pem_file.get_key())
+            self.env_file.set_encryptor()
 
         # use the --add-variable option
         self.add_variable_option()
 
         if self.pem_file.filepath_exists():
             if self.args.Encrypt and not self.env_file.is_binary():
-                self.encrypt_env_file()
+                self.env_file.encrypt_env_file()
 
             self.list_variable_option()
 
             if self.args.Decrypt and self.env_file.is_binary():
-                self.decrypt_data()
-
-
-"""verbose should be at lower levels"""
+                print(self.env_file.decrypt_data_from_env_file())

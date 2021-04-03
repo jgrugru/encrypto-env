@@ -1,5 +1,6 @@
 from os import path
 from .FileObject import FileObject
+from .Encryptor import Encryptor
 
 
 class EnvFile(FileObject):
@@ -18,21 +19,54 @@ class EnvFile(FileObject):
     bytes to the file.
     """
 
-    def __init__(self, environment_path, filename='.env'):
-        self.filepath = path.join(environment_path, filename)  
+    def __init__(self, environment_path, pem_file, filename='.env'):
+        self.filepath = path.join(environment_path, filename)
+        self.pem_file = pem_file
+        self.encryptor = None
 
-    def write_data_to_file(self, data, verbose_flag=False):
-        self.clear_file()
+    def set_encryptor(self):
+        self.encryptor = Encryptor(self.pem_file.get_key())
 
-        if not self.is_binary():
-            with open(self.filepath, 'wb') as env_file:
-                env_file.write(data)
-                env_file.close()
-            if verbose_flag:
-                print("Wrote encrypted data to " + str(self))
+    def parse_env_var_str(self, env_file_str):
+        for env_var in env_file_str.split("\n"):
+            if not env_var == "":
+                print(env_var.split("=")[0])
+
+    def append_variables_to_txt_str(self, text_str, variable_list):
+        appending_str = text_str
+        for var in variable_list:
+            appending_str += var + '\n'
+
+        return appending_str
+
+    def decrypt_data_from_env_file(self):
+        decrypted_data = None
+        if self.filepath_exists():
+            decrypted_data = self.encryptor.decrypt_data(
+                self.get_contents_of_file())
         else:
-            with open(self.filepath, 'w') as env_file:
-                env_file.write(data)
-                env_file.close()
-            if verbose_flag:
-                print("Wrote decrypted data to " + str(self))
+            print(self.get_filepath() + " does not exist.")
+        return decrypted_data
+
+    def encrypt_env_file(self):
+        if self.filepath_exists():
+            encrypted_data = self.encryptor.encrypt_data(
+                self.get_contents_of_file())
+            self.write_data_to_file(
+                encrypted_data)
+        else:
+            print(self.get_filepath() + " does not exist.")
+
+    def add_variables_as_txt(self, variable_list):
+        self.append_data_to_file(
+            self.append_variables_to_txt_str(
+                self.get_contents_of_file(),
+                variable_list))
+
+    def add_variables_as_bytes(self, variable_list):
+        decrypted_data = self.decrypt_data_from_env_file()
+        data_to_encrypt = self.append_variables_to_txt_str(
+            decrypted_data,
+            variable_list)
+        encrypted_data = self.encryptor.encrypt_data(data_to_encrypt)
+        self.write_data_to_file(encrypted_data)
