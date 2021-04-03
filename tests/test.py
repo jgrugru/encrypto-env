@@ -31,7 +31,6 @@ def base_args_with_vars(base_args):
 
 @fixture
 def base_args_with_vars_encrypted(base_args_with_vars):
-    # create a new list with a new spot in memory
     new_args_list = base_args_with_vars[:]
     new_args_list.append('-E')
     return new_args_list
@@ -76,8 +75,15 @@ def test_append_variables(base_args_with_vars):
     assert not env_file.is_empty()
 
 
-def test_append_variables_on_encrypted_file():
-    pass
+def test_append_variables_on_encrypted_file(base_args_with_vars_encrypted):
+    my_cli = CLI(base_args_with_vars_encrypted)
+    my_cli.run_script()
+    base_args_with_vars_encrypted.append('-a')
+    base_args_with_vars_encrypted.append('test3=123415')
+    my_cli = CLI(base_args_with_vars_encrypted)
+    my_cli.run_script()
+    assert 'test3=123415' and 'test1=123' and 'test=123' \
+        in my_cli.get_env_file().decrypt_data_from_env_file()
 
 
 def test_clear_option(base_args, base_args_with_vars):

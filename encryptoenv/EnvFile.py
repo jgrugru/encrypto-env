@@ -1,4 +1,4 @@
-from os import path
+from os import path, environ
 from .FileObject import FileObject
 from .Encryptor import Encryptor
 
@@ -70,3 +70,6 @@ class EnvFile(FileObject):
             variable_list)
         encrypted_data = self.encryptor.encrypt_data(data_to_encrypt)
         self.write_data_to_file(encrypted_data)
+
+    def set_env_variables(self):
+        environ["username"] = "12345"
