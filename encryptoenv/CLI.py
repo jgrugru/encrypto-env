@@ -1,8 +1,9 @@
 import argparse
+from os import path
+from fileflamingo.RSAFile import RSAFile
 
 from .EnvDir import EnvDir
 from .EnvFile import EnvFile
-from .PemFile import PemFile
 
 cli_version = '1.0'
 
@@ -129,7 +130,7 @@ class CLI():
 
     def clear_option(self):
         if(self.args.clear):
-            self.env_file.clear_file(self.args.verbose)
+            self.env_file.clear_file()
 
     def environmental_path_option(self):
         if self.args.environment_path:
@@ -143,39 +144,46 @@ class CLI():
             if(self.args.verbose):
                 print(self.env_dir.get_filepath() + " already exists.")
         else:
-            self.env_dir.create_filepath(self.args.verbose)
+            self.env_dir.create_filepath()
             if not self.args.no_key:
-                self.pem_file.gen_pem_file(self.args.verbose)
+                self.pem_file.gen_pem_file()
 
-    def create_env_file_object(self):
+    def create_env_file(self):
         if not self.args.dot_env_file:
-            self.env_file = EnvFile(self.env_dir.get_filepath(), self.pem_file)
+            self.env_file = EnvFile(
+                self.env_dir.get_filepath(),
+                self.pem_file.get_filepath())
         else:
             # If the name is specified, a blank will be created.
             self.args.blank = True
             self.env_file = EnvFile(self.env_dir.get_filepath(),
-                                    self.pem_file,
+                                    self.pem_file.get_filepath(),
                                     filename=self.args.dot_env_file)
 
-    def create_pem_file_object(self):
+        self.env_file.create_filepath()
+
+    def create_pem_file(self):
         if self.args.pem_file:
-            self.pem_file = PemFile(self.env_dir.get_filepath(),
-                                    self.args.pem_file)
+            self.pem_file = RSAFile(path.join(self.env_dir.get_filepath(),
+                                              self.args.pem_file))
         else:
-            self.pem_file = PemFile(self.env_dir.get_filepath())
+            self.pem_file = RSAFile(
+                path.join(self.env_dir.get_filepath(),
+                          'my_key.pem'))
+        self.pem_file.create_filepath()
+        self.pem_file.gen_pem_file()
 
     def blank_option(self):
         if self.args.blank:
-            self.env_file.create_filepath(self.args.verbose)
+            self.env_file.create_filepath()
 
     def add_variable_option(self):
         if self.args.add_variable:
-            if not self.env_file.filepath_exists():
-                self.env_file.create_filepath()
-            if not self.env_file.is_binary():
-                self.env_file.add_variables_as_txt(self.args.add_variable)
-            else:
-                self.env_file.add_variables_as_bytes(self.args.add_variable)
+            for x in self.args.add_variable:
+                if not self.env_file.is_empty():
+                    self.env_file.append_data_to_file('\n' + x)
+                else:
+                    self.env_file.append_data_to_file(x)
 
     def list_variable_option(self):
         if self.args.list_variables:
@@ -192,33 +200,36 @@ class CLI():
         # This needs to be one of the first actions.
         # Pem_file and env_file require the env_path
         self.environmental_path_option()
-
+        self.env_dir.create_filepath()
+        
         # check --pem-file option
-        self.create_pem_file_object()
+        self.create_pem_file()
 
         # check --dot-env-file option and create env_file
-        self.create_env_file_object()
+        self.create_env_file()
 
         # use the --clear option
         self.clear_option()
 
         # check if the env dir exists. Else create env and pem file
-        self.create_dir_and_pem()
+        # self.create_dir_and_pem()
 
         # use the -b (blank) option
         self.blank_option()
 
-        if not self.args.no_key:
-            self.env_file.set_encryptor()
+        # if not self.args.no_key:
+        #     self.env_file.set_encryptor()
 
         # use the --add-variable option
         self.add_variable_option()
 
         if self.pem_file.filepath_exists():
             if self.args.Encrypt and not self.env_file.is_binary():
-                self.env_file.encrypt_env_file()
+                self.env_file.encrypt()
 
-            self.list_variable_option()
-
+            # self.list_variable_option()
+            # breakpoint()
             if self.args.Decrypt and self.env_file.is_binary():
-                print(self.env_file.decrypt_data_from_env_file())
+                print("*********************", "I'm inside")
+                x = self.env_file.encryptor.pem_key#.decrypt_data(self.env_file.get_bytes_from_file())
+                print("*******", x)

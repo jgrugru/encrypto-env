@@ -1,5 +1,5 @@
 attrs==20.3.0
-cryptography==3.4.6
+fileflamingo==0.0.5
 iniconfig==1.1.1
 packaging==20.9
 pluggy==0.13.1

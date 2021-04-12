@@ -1,15 +1,16 @@
 from os import getcwd
-from .FileObject import FileObject
+from fileflamingo.BaseFile import BaseFile
 
 
-class EnvDir(FileObject):
+class EnvDir(BaseFile):
     """
     This class is an abstraction of the
     environmental path. Inherits from
-    FileOBject. The default environment
+    BaseFile. The default environment
     path is ./env. This can be overwritten
     with the -e or --environment-path.
-    EX) encryptoenv "my_key.pem" -e "/tmp/env"
+    Example:
+    $ encryptoenv "my_key.pem" -e "/tmp/env"
     """
     default_path = getcwd() + '/env/'
 
