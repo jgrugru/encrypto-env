@@ -1,5 +1,6 @@
 from os import path
 from fileflamingo.EncryptionFile import EncryptionFile
+from fileflamingo.RSAFile import RSAFile
 
 
 class EnvFile(EncryptionFile):
@@ -18,8 +19,14 @@ class EnvFile(EncryptionFile):
     bytes to the file.
     """
 
-    def __init__(self, environment_path, pem_filepath, filename='.env'):
-        super().__init__(path.join(environment_path, filename), pem_filepath)
+    def __init__(self, environment_path, filename='.env', pem_filename='my_key.pem'):
+        self.rsa_file = RSAFile(path.join(environment_path, pem_filename))
+        if not self.rsa_file.filepath_exists():
+            self.rsa_file.gen_pem_file()
+
+        super().__init__(
+            path.join(environment_path, filename),
+            path.join(environment_path, pem_filename))
 
     def append_variables_to_txt_str(self, text_str, variable_list):
         appending_str = text_str

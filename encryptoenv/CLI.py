@@ -1,6 +1,5 @@
 import argparse
 from os import path
-from fileflamingo.RSAFile import RSAFile
 
 from .EnvDir import EnvDir
 from .EnvFile import EnvFile
@@ -149,29 +148,12 @@ class CLI():
                 self.pem_file.gen_pem_file()
 
     def create_env_file(self):
-        if not self.args.dot_env_file:
-            self.env_file = EnvFile(
-                self.env_dir.get_filepath(),
-                self.pem_file.get_filepath())
-        else:
-            # If the name is specified, a blank will be created.
-            self.args.blank = True
-            self.env_file = EnvFile(self.env_dir.get_filepath(),
-                                    self.pem_file.get_filepath(),
-                                    filename=self.args.dot_env_file)
+        # If the name is specified, a blank will be created.
+        self.env_file = EnvFile(self.env_dir.get_filepath())#,
+                                # pem_filename=self.args.pem_file,
+                                # filename=self.args.dot_env_file)
 
         self.env_file.create_filepath()
-
-    def create_pem_file(self):
-        if self.args.pem_file:
-            self.pem_file = RSAFile(path.join(self.env_dir.get_filepath(),
-                                              self.args.pem_file))
-        else:
-            self.pem_file = RSAFile(
-                path.join(self.env_dir.get_filepath(),
-                          'my_key.pem'))
-        self.pem_file.create_filepath()
-        self.pem_file.gen_pem_file()
 
     def blank_option(self):
         if self.args.blank:
@@ -203,7 +185,7 @@ class CLI():
         self.env_dir.create_filepath()
         
         # check --pem-file option
-        self.create_pem_file()
+        # self.create_pem_file()
 
         # check --dot-env-file option and create env_file
         self.create_env_file()
@@ -223,13 +205,12 @@ class CLI():
         # use the --add-variable option
         self.add_variable_option()
 
-        if self.pem_file.filepath_exists():
-            if self.args.Encrypt and not self.env_file.is_binary():
-                self.env_file.encrypt()
+        if self.args.Encrypt and not self.env_file.is_binary():
+            self.env_file.encrypt()
 
-            # self.list_variable_option()
-            # breakpoint()
-            if self.args.Decrypt and self.env_file.is_binary():
-                print("*********************", "I'm inside")
-                x = self.env_file.encryptor.pem_key#.decrypt_data(self.env_file.get_bytes_from_file())
-                print("*******", x)
+        # self.list_variable_option()
+        # breakpoint()
+        if self.args.Decrypt and self.env_file.is_binary():
+            print("*********************", "I'm inside")
+            x = self.env_file.encryptor.decrypt_data(self.env_file.get_bytes_from_file())
+            print("*******", x)

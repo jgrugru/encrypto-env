@@ -47,13 +47,13 @@ def test_pem_file_option(base_args):
     base_args.append('RSA_KEY.pem')
     my_cli = CLI(base_args)
     my_cli.run_script()
-    assert my_cli.get_pem_file().filepath_exists()
+    assert my_cli.env_file.rsa_file.filepath_exists()
 
 
 def test_environment_path(base_args):
     my_cli = CLI(base_args)
     my_cli.run_script()
-    assert my_cli.get_pem_file().is_file()
+    assert my_cli.env_file.filepath_exists()
     assert my_cli.get_environment_path().is_dir()
 
 
@@ -122,18 +122,6 @@ def test_dot_env_file_option(base_args):
 #     assert not my_cli.get_pem_file().filepath_exists()
 
 
-def test_encrypt(base_args_with_vars_encrypted, base_args):
-    my_cli = CLI(base_args_with_vars_encrypted)
-    my_cli.run_script()
-    env_file = my_cli.get_env_file()
-    assert env_file.is_binary()
-    assert env_file.filepath_exists()
-    assert not env_file.is_empty()
-    base_args.append('-D')
-    my_cli = CLI(base_args)
-    my_cli.run_script()
-    # assert not env_file.is_binary()
-
 def test_blank_option_with_already_populated_env_file(
         base_args, base_args_with_vars):
     my_cli = CLI(base_args_with_vars)
@@ -156,3 +144,16 @@ def test_clear_option_on_binary(base_args, base_args_with_vars_encrypted):
     my_cli.run_script()
     assert not env_file.is_binary()
     assert env_file.is_empty()
+
+
+# def test_encrypt(base_args_with_vars_encrypted, base_args):
+#     my_cli = CLI(base_args_with_vars_encrypted)
+#     my_cli.run_script()
+#     env_file = my_cli.get_env_file()
+#     assert env_file.is_binary()
+#     assert env_file.filepath_exists()
+#     assert not env_file.is_empty()
+#     base_args.append('-D')
+#     my_cli = CLI(base_args)
+#     my_cli.run_script()
+    # assert not env_file.is_binary()
