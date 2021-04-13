@@ -16,6 +16,8 @@ class CLI():
     def __init__(self, args):
         self.args = self.parse_args(args)
         self.environment_path = getcwd() + '/env/'
+        self.env_filename = ".env"
+        self.pem_filename = "my_key.pem"
 
     def parse_args(self, args):
         self.my_parser = argparse.ArgumentParser(
@@ -39,10 +41,9 @@ class CLI():
 
     def add_arguments(self):
         self.my_parser.add_argument(
-            # "pem_filename",
             "-p",
             "--pem-file",
-            metavar="pem_path",
+            metavar="pem_filepath",
             type=str,
             help="The pem filepath relative to the environment path folder")
 
@@ -113,27 +114,21 @@ class CLI():
     def get_env_file(self):
         return self.env_file
 
-    def create_env_file(self):
+    def check_filepaths(self):
         if self.args.environment_path:
             self.environment_path = self.args.environment_path
 
-        if self.args.pem_file and self.args.dot_env_file:
-            self.env_file = EnvFile(self.environment_path,
-                                    self.args.no_key,
-                                    filename=self.args.dot_env_file,
-                                    pem_filename=self.args.pem_file)
-        else:
-            if self.args.pem_file:
-                self.env_file = EnvFile(self.environment_path,
-                                        self.args.no_key,
-                                        pem_filename=self.args.pem_file)
-            elif self.args.dot_env_file:
-                self.env_file = EnvFile(self.environment_path,
-                                        self.args.no_key,
-                                        filename=self.args.dot_env_file)
-            else:
-                self.env_file = EnvFile(self.environment_path,
-                                        self.args.no_key)
+        if self.args.dot_env_file:
+            self.env_filename = self.args.dot_env_file
+
+        if self.args.pem_file:
+            self.pem_filename = self.args.pem_file
+
+    def create_env_file(self):
+        self.env_file = EnvFile(self.env_filename,
+                                self.pem_filename,
+                                self.environment_path,
+                                self.args.no_key)
 
         self.env_file.create_filepath()
 
@@ -172,6 +167,8 @@ class CLI():
         if self.args.verbose:
             print(vars(self.args))
 
+        self.check_filepaths()
+
         # --pem_file
         # --dot-env-file
         # --environment-path
@@ -182,13 +179,16 @@ class CLI():
         # --clear
         self.clear_option()
 
-        # use the --add-variable option
+        # --add-variable
         self.add_variable_option()
 
+        # -E
         if self.args.Encrypt and not self.env_file.is_binary():
             self.env_file.encrypt()
 
+        # -l
         self.list_variable_option()
 
+        # -D
         if self.args.Decrypt and self.env_file.is_binary():
             self.env_file.decrypt()

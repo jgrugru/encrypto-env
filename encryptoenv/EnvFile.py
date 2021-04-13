@@ -21,16 +21,17 @@ class EnvFile(EncryptionFile):
     """
 
     def __init__(self,
+                 filename,
+                 pem_filename,
                  environment_path,
-                 no_key,
-                 filename='.env',
-                 pem_filename='my_key.pem'):
+                 no_key):
 
         self.environment_path = BaseFile(environment_path)
         self.environment_path.create_filepath()
 
         self.rsa_file = RSAFile(path.join(environment_path, pem_filename))
         if not self.rsa_file.filepath_exists():
+            self.rsa_file.create_filepath()
             self.rsa_file.gen_pem_file()
 
         super().__init__(
@@ -43,11 +44,6 @@ class EnvFile(EncryptionFile):
             appending_str += var + '\n'
 
         return appending_str
-
-    def add_variables_as_txt(self, variable_list):
-        self.append_data_to_file(
-            self.append_variables_to_txt_str(
-                self.get_contents_of_file(), variable_list))
 
     def decrypt_data_from_env_file(self):
         decrypted_data = self.encryptor.decrypt_data(
