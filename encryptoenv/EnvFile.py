@@ -49,20 +49,15 @@ class EnvFile(EncryptionFile):
             self.append_variables_to_txt_str(
                 self.get_contents_of_file(), variable_list))
 
-    def parse_env_var_str(self, env_file_str):
-        for env_var in env_file_str.split("\n"):
-            if not env_var == "":
-                print(env_var.split("=")[0])
-
     def decrypt_data_from_env_file(self):
         decrypted_data = self.encryptor.decrypt_data(
             self.get_bytes_from_file())
         return decrypted_data
 
-    # def add_variables_as_bytes(self, variable_list):
-    #     decrypted_data = self.decrypt_data_from_env_file()
-    #     data_to_encrypt = self.append_variables_to_txt_str(
-    #         decrypted_data,
-    #         variable_list)
-    #     encrypted_data = self.encryptor.encrypt_data(data_to_encrypt)
-    #     self.write_data_to_file(encrypted_data)
+    def add_variables_as_bytes(self, variable_list):
+        decrypted_data = self.decrypt_data_from_env_file()
+        data_to_encrypt = self.append_variables_to_txt_str(
+            decrypted_data,
+            variable_list)
+        encrypted_data = self.encryptor.encrypt_data(data_to_encrypt)
+        self.write_bytes_to_file(encrypted_data)

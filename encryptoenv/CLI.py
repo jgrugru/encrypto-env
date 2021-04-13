@@ -143,16 +143,28 @@ class CLI():
 
     def add_variable_option(self):
         if self.args.add_variable:
-            for x in self.args.add_variable:
-                if not self.env_file.is_empty():
-                    self.env_file.append_data_to_file('\n' + x)
-                else:
-                    self.env_file.append_data_to_file(x)
+            if self.env_file.is_encrypted:
+                self.env_file.add_variables_as_bytes(self.args.add_variable)
+            else:
+                for x in self.args.add_variable:
+                    if not self.env_file.is_empty():
+                        self.env_file.append_data_to_file('\n' + x)
+                    else:
+                        self.env_file.append_data_to_file(x)
 
     def list_variable_option(self):
         if self.args.list_variables:
-            self.env_file.parse_env_var_str(
+            var_name_list = self.split_str_by_equalsign(
                 self.env_file.decrypt_data_from_env_file())
+            print('\n'.join(var_name_list))
+
+    def split_str_by_equalsign(self, env_file_str):
+        var_name_list = []
+        for env_var in env_file_str.split("\n"):
+            if not env_var == "":
+                var_name_list.append(env_var.split("=")[0])
+
+        return var_name_list
 
     def run_script(self):
 

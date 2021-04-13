@@ -105,15 +105,15 @@ def test_dot_env_file_option(base_args):
 #     assert not env_file.rsa_file.filepath_exists()
 
 
-# def test_append_variables_on_encrypted_file(base_args_with_vars_encrypted):
-#     my_cli = CLI(base_args_with_vars_encrypted)
-#     my_cli.run_script()
-#     base_args_with_vars_encrypted.append('-a')
-#     base_args_with_vars_encrypted.append('test3=123415')
-#     my_cli = CLI(base_args_with_vars_encrypted)
-#     my_cli.run_script()
-#     assert 'test3=123415' and 'test1=123' and 'test=123' \
-#         in my_cli.get_env_file().decrypt_data_from_env_file()
+def test_append_variables_on_encrypted_file(base_args_with_vars_encrypted):
+    my_cli = CLI(base_args_with_vars_encrypted)
+    my_cli.run_script()
+    base_args_with_vars_encrypted.append('-a')
+    base_args_with_vars_encrypted.append('test3=123415')
+    my_cli = CLI(base_args_with_vars_encrypted)
+    my_cli.run_script()
+    assert 'test3=123415' and 'test1=123' and 'test=123' \
+        in my_cli.get_env_file().decrypt_data_from_env_file()
 
 
 def test_list_variables_option(base_args_with_vars_encrypted):
