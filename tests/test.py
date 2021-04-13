@@ -116,15 +116,15 @@ def test_dot_env_file_option(base_args):
 #         in my_cli.get_env_file().decrypt_data_from_env_file()
 
 
-# def test_list_variables_option(base_args_with_vars_encrypted):
-#     base_args_with_vars_encrypted.append('-l')
-#     old_stdout = sys.stdout
-#     sys.stdout = mystdout = StringIO()
-#     my_cli = CLI(base_args_with_vars_encrypted)
-#     my_cli.run_script()
-#     sys.stdout = old_stdout
-#     stdout_value = mystdout.getvalue()
-#     assert 'test' and 'test1' in stdout_value
+def test_list_variables_option(base_args_with_vars_encrypted):
+    base_args_with_vars_encrypted.append('-l')
+    old_stdout = sys.stdout
+    sys.stdout = mystdout = StringIO()
+    my_cli = CLI(base_args_with_vars_encrypted)
+    my_cli.run_script()
+    sys.stdout = old_stdout
+    stdout_value = mystdout.getvalue()
+    assert 'test' and 'test1' in stdout_value
 
 
 def test_encrypt_and_decrypt(base_args_with_vars_encrypted,

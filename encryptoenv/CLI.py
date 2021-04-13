@@ -176,6 +176,7 @@ class CLI():
         if self.args.Encrypt and not self.env_file.is_binary():
             self.env_file.encrypt()
 
-        # self.list_variable_option()
+        self.list_variable_option()
+
         if self.args.Decrypt and self.env_file.is_binary():
             self.env_file.decrypt()
