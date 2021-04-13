@@ -1,9 +1,9 @@
 import argparse
+from os import getcwd
 
 from .EnvFile import EnvFile
 
 cli_version = '1.0'
-
 
 class CLI():
     """
@@ -14,6 +14,7 @@ class CLI():
 
     def __init__(self, args):
         self.args = self.parse_args(args)
+        self.environment_path = getcwd() + '/env/'
 
     def parse_args(self, args):
         self.my_parser = argparse.ArgumentParser(
@@ -111,26 +112,33 @@ class CLI():
     def get_env_file(self):
         return self.env_file
 
-    def clear_option(self):
-        if(self.args.clear):
-            self.env_file.clear_file()
-
     def create_env_file(self):
+        if self.args.environment_path:
+            self.environment_path = self.args.environment_path
+
         if self.args.pem_file and self.args.dot_env_file:
-            self.env_file = EnvFile(self.args.no_key,
+            self.env_file = EnvFile(self.environment_path,
+                                    self.args.no_key,
                                     filename=self.args.dot_env_file,
                                     pem_filename=self.args.pem_file)
         else:
             if self.args.pem_file:
-                self.env_file = EnvFile(self.args.no_key,
+                self.env_file = EnvFile(self.environment_path,
+                                        self.args.no_key,
                                         pem_filename=self.args.pem_file)
             elif self.args.dot_env_file:
-                self.env_file = EnvFile(self.args.no_key,
+                self.env_file = EnvFile(self.environment_path,
+                                        self.args.no_key,
                                         filename=self.args.dot_env_file)
             else:
-                self.env_file = EnvFile(self.args.no_key)
+                self.env_file = EnvFile(self.environment_path,
+                                        self.args.no_key)
 
         self.env_file.create_filepath()
+
+    def clear_option(self):
+        if(self.args.clear):
+            self.env_file.clear_file()
 
     def add_variable_option(self):
         if self.args.add_variable:

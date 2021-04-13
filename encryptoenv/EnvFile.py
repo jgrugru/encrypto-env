@@ -20,10 +20,9 @@ class EnvFile(EncryptionFile):
     bytes to the file.
     """
 
-    default_environment_path = getcwd() + '/env/'
-
-    def __init__(self, no_key,
-                 environment_path=default_environment_path,
+    def __init__(self,
+                 environment_path,
+                 no_key,
                  filename='.env',
                  pem_filename='my_key.pem'):
 
