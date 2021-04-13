@@ -1,4 +1,4 @@
-from os import path, getcwd
+from os import path
 from fileflamingo.EncryptionFile import BaseFile
 from fileflamingo.EncryptionFile import EncryptionFile
 from fileflamingo.RSAFile import RSAFile

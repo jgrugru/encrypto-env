@@ -5,6 +5,7 @@ from .EnvFile import EnvFile
 
 cli_version = '1.0'
 
+
 class CLI():
     """
     Class that filters through the command line options.
@@ -162,6 +163,7 @@ class CLI():
         # --pem_file
         # --dot-env-file
         # --environment-path
+        # --no-key
         # creates pem_file if it doesn't exist
         self.create_env_file()
 
