@@ -1,7 +1,5 @@
 import argparse
-from os import path
 
-from .EnvDir import EnvDir
 from .EnvFile import EnvFile
 
 cli_version = '1.0'
@@ -16,8 +14,6 @@ class CLI():
 
     def __init__(self, args):
         self.args = self.parse_args(args)
-        self.env_dir = EnvDir()
-        self.pem_file = None
 
     def parse_args(self, args):
         self.my_parser = argparse.ArgumentParser(
@@ -54,12 +50,6 @@ class CLI():
             type=str,
             help="Default is 'env' dir. This is where \
                   the program looks for the pem")
-
-        self.my_parser.add_argument(
-            '-b',
-            '--blank',
-            action='store_true',
-            help="Create blank .env file")
 
         self.my_parser.add_argument(
             '-a',
@@ -121,43 +111,26 @@ class CLI():
     def get_env_file(self):
         return self.env_file
 
-    def get_pem_file(self):
-        return self.pem_file
-
-    def get_environment_path(self):
-        return self.env_dir
-
     def clear_option(self):
         if(self.args.clear):
             self.env_file.clear_file()
 
-    def environmental_path_option(self):
-        if self.args.environment_path:
-            self.env_dir.set_filepath(self.args.environment_path)
-            if self.args.verbose:
-                print("Set environemental path to "
-                      + self.env_dir.get_filepath())
-
-    def create_dir_and_pem(self):
-        if self.env_dir.filepath_exists():
-            if(self.args.verbose):
-                print(self.env_dir.get_filepath() + " already exists.")
-        else:
-            self.env_dir.create_filepath()
-            if not self.args.no_key:
-                self.pem_file.gen_pem_file()
-
     def create_env_file(self):
-        # If the name is specified, a blank will be created.
-        self.env_file = EnvFile(self.env_dir.get_filepath())#,
-                                # pem_filename=self.args.pem_file,
-                                # filename=self.args.dot_env_file)
+        if self.args.pem_file and self.args.dot_env_file:
+            self.env_file = EnvFile(self.args.no_key,
+                                    filename=self.args.dot_env_file,
+                                    pem_filename=self.args.pem_file)
+        else:
+            if self.args.pem_file:
+                self.env_file = EnvFile(self.args.no_key,
+                                        pem_filename=self.args.pem_file)
+            elif self.args.dot_env_file:
+                self.env_file = EnvFile(self.args.no_key,
+                                        filename=self.args.dot_env_file)
+            else:
+                self.env_file = EnvFile(self.args.no_key)
 
         self.env_file.create_filepath()
-
-    def blank_option(self):
-        if self.args.blank:
-            self.env_file.create_filepath()
 
     def add_variable_option(self):
         if self.args.add_variable:
@@ -178,29 +151,14 @@ class CLI():
         if self.args.verbose:
             print(vars(self.args))
 
-        # Use the -e option to set the environment path.
-        # This needs to be one of the first actions.
-        # Pem_file and env_file require the env_path
-        self.environmental_path_option()
-        self.env_dir.create_filepath()
-        
-        # check --pem-file option
-        # self.create_pem_file()
-
-        # check --dot-env-file option and create env_file
+        # --pem_file
+        # --dot-env-file
+        # --environment-path
+        # creates pem_file if it doesn't exist
         self.create_env_file()
 
-        # use the --clear option
+        # --clear
         self.clear_option()
-
-        # check if the env dir exists. Else create env and pem file
-        # self.create_dir_and_pem()
-
-        # use the -b (blank) option
-        self.blank_option()
-
-        # if not self.args.no_key:
-        #     self.env_file.set_encryptor()
 
         # use the --add-variable option
         self.add_variable_option()
@@ -209,8 +167,5 @@ class CLI():
             self.env_file.encrypt()
 
         # self.list_variable_option()
-        # breakpoint()
         if self.args.Decrypt and self.env_file.is_binary():
-            print("*********************", "I'm inside")
-            x = self.env_file.encryptor.decrypt_data(self.env_file.get_bytes_from_file())
-            print("*******", x)
+            self.env_file.decrypt()

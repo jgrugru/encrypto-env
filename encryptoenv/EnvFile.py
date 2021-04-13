@@ -1,4 +1,5 @@
-from os import path
+from os import path, getcwd
+from fileflamingo.EncryptionFile import BaseFile
 from fileflamingo.EncryptionFile import EncryptionFile
 from fileflamingo.RSAFile import RSAFile
 
@@ -19,7 +20,16 @@ class EnvFile(EncryptionFile):
     bytes to the file.
     """
 
-    def __init__(self, environment_path, filename='.env', pem_filename='my_key.pem'):
+    default_environment_path = getcwd() + '/env/'
+
+    def __init__(self, no_key,
+                 environment_path=default_environment_path,
+                 filename='.env',
+                 pem_filename='my_key.pem'):
+
+        self.environment_path = BaseFile(environment_path)
+        self.environment_path.create_filepath()
+
         self.rsa_file = RSAFile(path.join(environment_path, pem_filename))
         if not self.rsa_file.filepath_exists():
             self.rsa_file.gen_pem_file()
