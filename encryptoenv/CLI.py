@@ -111,13 +111,15 @@ class CLI():
     def get_env_file(self):
         return self.env_file
 
-    def check_filepaths(self):
+    def environment_path_option(self):
         if self.args.environment_path:
             self.environment_path = self.args.environment_path
 
+    def dot_env_file_option(self):
         if self.args.dot_env_file:
             self.env_filename = self.args.dot_env_file
 
+    def pem_file_option(self):
         if self.args.pem_file:
             self.pem_filename = self.args.pem_file
 
@@ -159,7 +161,9 @@ class CLI():
         if self.args.verbose:
             print(vars(self.args))
 
-        self.check_filepaths()
+        self.environment_path_option()
+        self.dot_env_file_option()
+        self.pem_file_option()
 
         # --pem_file
         # --dot-env-file

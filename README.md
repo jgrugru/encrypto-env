@@ -75,7 +75,7 @@ You can add these parameters from the text file by using the @ symbol:
 $ python encryptoenv/main.py @my_parameters.txt
 ```
 
-I can also add any additional arguments:
+I can also add additional arguments:
 ```
 $ python encryptoenv/main.py @my_parameters.txt -a "USERNAME=jgrugru" -E
 ```
