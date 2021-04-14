@@ -1,12 +1,12 @@
 # encrypto-env [![Build Status](https://travis-ci.com/jgrugru/encrypto-env.svg?branch=main)](https://travis-ci.com/jgrugru/encrypto-env)
 With one command, you can setup and protect your environment variables. Encrypto-env encrypts the *.env* file with an RSA key stored in a pem file. 
 
-# Install
+# :pill: Install
 ```python
 pip3 install encryptoenv
 ```
 
-# Examples
+# :hamburger: Examples
 ```python
 $ encryptoenv -a "USERNAME=JGRUGRU" "PASSWORD=MYPASS!2314" -E
 ```
@@ -43,19 +43,19 @@ optional arguments:
   -l, --list-variables  List the variable names stored in the .env file
 ```
 
-## Default paths
+## :open_file_folder: Default paths
 
 By default the encryptoenv will use these default paths:
- * creates *env* dir in the current working directory 
- * creates *my_key.pem*, the RSA key, in the env directory
- * creates *.env*, the file holding the variables, in the env dir
+ 1. creates *env* dir in the current working directory 
+ 2. creates *my_key.pem*, the RSA key, in the env directory
+ 3. creates *.env*, the file holding the variables, in the env dir
 
  * cwd/
    * env/
      * my_key.pem
      * .env
 
-## Using Arguments from a txt file
+## :pushpin: Using Arguments from a txt file
 
 If your _pem_ and _.env_ file are not in the default locations, you may find yourself typing out the filepaths for each command.
 To avoid this, your parameters can be stored in a txt file.
