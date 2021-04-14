@@ -41,3 +41,28 @@ optional arguments:
   --version             show program's version number and exit
   -E, --Encrypt         Encrypt .env file
   -D, --Decrypt         Decrypt .env file
+```
+
+## Using Arguments from a txt file
+
+If you're _pem file_, _.env_ are not in the default locations, you may find yourself typing out the filepaths quite often for each command. This can be avoided by storing your parameters in a txt file.
+
+You can create an _env.txt_ file that looks something like this:
+```
+--environment-path
+/home/jgrugru/Desktop/projects/encrypto-env/my_environment/
+-p
+RSA_KEY.pem
+--dot-env-file
+ENV
+```
+
+This will save all the hassle from typing the filepaths over and over. I can use this txt file through this command:
+```
+$ python encryptoenv/main.py @env.txt
+```
+
+I can also add on other agrument options after the file:
+```
+$ python encryptoenv/main.py @env.txt -a "USERNAME=jgrugru" -E
+```
