@@ -1,5 +1,5 @@
 import sys
-from os import path
+from os import path, listdir
 from io import StringIO         # noqa: F401
 from pytest import fixture
 
@@ -40,6 +40,16 @@ def base_args_decrypted(base_args):
     new_args_list = base_args[:]
     new_args_list.append('-D')
     return new_args_list
+
+
+def is_there_a_pem_file(file_list):
+    is_there_a_my_key_pem = False
+
+    for file in file_list:
+        if file == 'my_key.pem':
+            is_there_a_my_key_pem = True
+
+    return is_there_a_my_key_pem
 
 
 def test_environment_path(base_args):
@@ -99,12 +109,25 @@ def test_dot_env_file_option(base_args):
     assert my_cli.get_env_file().filepath_exists()
 
 
-# def test_no_key_option(base_args):
-#     base_args.append('--no-key')
-#     my_cli = CLI(base_args)
-#     my_cli.run_script()
-#     env_file = my_cli.get_env_file()
-#     assert not env_file.rsa_file.filepath_exists()
+def test_no_key_option(base_args):
+    base_args.append('--no-key')
+    my_cli = CLI(base_args)
+    my_cli.run_script()
+    env_file = my_cli.get_env_file()
+    is_there_a_pem = False
+    for file in listdir(path.dirname(env_file.get_filepath())):
+        if file == 'my_key.pem':
+            is_there_a_pem = True
+    assert not is_there_a_pem
+
+
+def test_no_key_option_with_adding_variables(base_args_with_vars):
+    base_args_with_vars.append('--no-key')
+    my_cli = CLI(base_args_with_vars)
+    my_cli.run_script()
+    env_file = my_cli.get_env_file()
+    file_list = listdir(path.dirname(env_file.get_filepath()))
+    assert not is_there_a_pem_file(file_list)
 
 
 def test_list_variables_option(base_args, base_args_with_vars_encrypted):

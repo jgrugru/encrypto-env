@@ -18,11 +18,11 @@ class EnvFile(EncryptionFile):
 
         self.environment_path = BaseFile(environment_path)
         self.environment_path.create_filepath()
-        
+
         if not no_key:
             self.rsa_file = RSAFile(path.join(environment_path, pem_filename))
             if not self.rsa_file.filepath_exists():
-                self.rsa_file.create_filepath()  # This allows the file to be something besides a pem. 
+                self.rsa_file.create_filepath()
                 self.rsa_file.gen_pem_file()
 
             super().__init__(
