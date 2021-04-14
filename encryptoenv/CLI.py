@@ -51,8 +51,7 @@ class CLI():
             '--environment-path',
             metavar="env_path",
             type=str,
-            help="Default is 'env' dir. This is where \
-                  the program looks for the pem")
+            help="Default is 'env' dir. Default dir for RSA key and .env")
 
         self.my_parser.add_argument(
             '-a',
@@ -72,22 +71,8 @@ class CLI():
             '--dot-env-file',
             metavar="dot_env_file",
             action="store",
-            help="Specify the name of the \
-                  .env file stored in the filepath environmental_path/env"
-        )
-
-        self.my_parser.add_argument(
-            '-l',
-            '--list-variables',
-            action='store_true',
-            help="List the variable names stored in the .env file"
-        )
-
-        self.my_parser.add_argument(
-            '--no-key',
-            action='store_true',
-            help="Disables creation of my_key.pem file"
-        )
+            help="The .env filepath relative to the \
+                  environment path folder")
 
         self.my_parser.add_argument(
             '-v',
@@ -110,6 +95,18 @@ class CLI():
             '--Decrypt',
             action='store_true',
             help='Decrypt .env file')
+
+        self.my_group.add_argument(
+            '--no-key',
+            action='store_true',
+            help="Disables creation of my_key.pem file")
+
+        self.my_group.add_argument(
+            '-l',
+            '--list-variables',
+            action='store_true',
+            help="List the variable names stored in the .env file"
+        )
 
     def get_env_file(self):
         return self.env_file
