@@ -11,9 +11,9 @@ pip3 install encryptoenv
 $ encryptoenv -a "USERNAME=JGRUGRU" "PASSWORD=MYPASS!2314" -E
 ```
 This command:
-1. creates an /env/ dir in the current directory.
-2. creates /env/.env file in the current directory.
-3. creates /env/my_key.pem 
+1. creates an _/env_ dir in the current directory.
+2. creates _/env/.env_ file in the current directory.
+3. creates */env/my_key.pem* 
 4. *-a* option adds variables in the *.env* file
 5. *-E* option encrypts the *.env* file with the specified key, in this case, the default "my_key.pem"
 
@@ -43,9 +43,21 @@ optional arguments:
   -l, --list-variables  List the variable names stored in the .env file
 ```
 
+## Default paths
+
+By default the encryptoenv will use these default paths:
+ * creates *env* dir in the current working directory 
+ * creates *my_key.pem*, the RSA key, in the env directory
+ * creates *.env*, the file holding the variables, in the env dir
+
+ * cwd/
+   * env/
+     * my_key.pem
+     * .env
+
 ## Using Arguments from a txt file
 
-If your _pem file_ and _.env_ file are not in the default locations, you may find yourself typing out the filepaths for each command.
+If your _pem_ and _.env_ file are not in the default locations, you may find yourself typing out the filepaths for each command.
 To avoid this, your parameters can be stored in a txt file.
 
 You can create a txt file that looks something like this:
