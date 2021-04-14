@@ -146,17 +146,12 @@ class CLI():
 
     def list_variable_option(self):
         if self.args.list_variables:
-            var_name_list = self.split_str_by_equalsign(
-                self.env_file.decrypt_data_from_env_file())
-            print('\n'.join(var_name_list))
-
-    def split_str_by_equalsign(self, env_file_str):
-        var_name_list = []
-        for env_var in env_file_str.split("\n"):
-            if not env_var == "":
-                var_name_list.append(env_var.split("=")[0])
-
-        return var_name_list
+            for count, variable in enumerate(
+                    self.env_file.get_decrypted_data().split("\n")):
+                if count != 0:
+                    print("\n")
+                if variable != "":
+                    print(self.env_file.split_str_by_equalsign(variable)[0])
 
     def run_script(self):
 

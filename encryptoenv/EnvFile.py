@@ -45,13 +45,16 @@ class EnvFile(EncryptionFile):
 
         return appending_str
 
-    def decrypt_data_from_env_file(self):
+    def split_str_by_equalsign(self, variable):
+        return variable.split("=")
+
+    def get_decrypted_data(self):
         decrypted_data = self.encryptor.decrypt_data(
             self.get_bytes_from_file())
         return decrypted_data
 
     def add_variables_as_bytes(self, variable_list):
-        decrypted_data = self.decrypt_data_from_env_file()
+        decrypted_data = self.get_decrypted_data()
         data_to_encrypt = self.append_variables_to_txt_str(
             decrypted_data,
             variable_list)

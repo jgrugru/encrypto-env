@@ -66,7 +66,7 @@ def test_append_variables_on_encrypted_file(base_args_with_vars_encrypted):
     my_cli = CLI(base_args_with_vars_encrypted)
     my_cli.run_script()
     assert 'test3=123415' and 'test1=123' and 'test=123' \
-        in my_cli.get_env_file().decrypt_data_from_env_file()
+        in my_cli.get_env_file().get_decrypted_data()
 
 
 def test_clear_option(base_args, base_args_with_vars):
@@ -125,7 +125,7 @@ def test_encrypt_and_decrypt(base_args_with_vars_encrypted,
     my_cli = CLI(base_args_with_vars_encrypted)
     my_cli.run_script()
     env_file = my_cli.get_env_file()
-    contents_of_env_file = env_file.decrypt_data_from_env_file()
+    contents_of_env_file = env_file.get_decrypted_data()
     assert env_file.is_binary()
     assert env_file.filepath_exists()
     assert not env_file.is_empty()

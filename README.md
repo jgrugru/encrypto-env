@@ -45,7 +45,7 @@ optional arguments:
 
 ## :open_file_folder: Default paths
 
-By default the encryptoenv will use these default paths:
+By default encryptoenv will use these default paths:
  1. creates *env* dir in the current working directory 
  2. creates *my_key.pem*, the RSA key, in the env directory
  3. creates *.env*, the file holding the variables, in the env dir
