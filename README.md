@@ -11,13 +11,14 @@ pip3 install encryptoenv
 $ encryptoenv -a "USERNAME=JGRUGRU" "PASSWORD=MYPASS!2314" -E
 ```
 This command:
-1. creates an /env/.env file in the current directory.
-2. creates "my_key.pem" in /env/my_key.pem
-3. adds variables in the *.env* file with the *-a* option
-4. the *-E* option encrypts the *.env* file with the specified key, in this case, the default "my_key.pem"
+1. creates an /env/ dir in the current directory.
+2. creates /env/.env file in the current directory.
+3. creates /env/my_key.pem 
+4. *-a* option adds variables in the *.env* file
+5. *-E* option encrypts the *.env* file with the specified key, in this case, the default "my_key.pem"
 
 
-```python
+```
 $ python encryptoenv/main.py -h
 usage: encrypto-env [options] path
 
@@ -38,13 +39,16 @@ optional arguments:
   --version             show program's version number and exit
   -E, --Encrypt         Encrypt .env file
   -D, --Decrypt         Decrypt .env file
+  --no-key              Disables creation of my_key.pem file
+  -l, --list-variables  List the variable names stored in the .env file
 ```
 
 ## Using Arguments from a txt file
 
-If you're _pem file_, _.env_ are not in the default locations, you may find yourself typing out the filepaths quite often for each command. This can be avoided by storing your parameters in a txt file.
+If your _pem file_ and _.env_ file are not in the default locations, you may find yourself typing out the filepaths for each command.
+To avoid this, your parameters can be stored in a txt file.
 
-You can create an _env.txt_ file that looks something like this:
+You can create a txt file that looks something like this:
 ```
 --environment-path
 /home/jgrugru/Desktop/projects/encrypto-env/my_environment/
@@ -54,12 +58,12 @@ RSA_KEY.pem
 ENV
 ```
 
-This will save all the hassle from typing the filepaths over and over. I can use this txt file through this command:
+You can add these parameters from the text file by using the @ symbol:
 ```
-$ python encryptoenv/main.py @env.txt
+$ python encryptoenv/main.py @my_parameters.txt
 ```
 
-I can also add on other agrument options after the file:
+I can also add any additional arguments:
 ```
-$ python encryptoenv/main.py @env.txt -a "USERNAME=jgrugru" -E
+$ python encryptoenv/main.py @my_parameters.txt -a "USERNAME=jgrugru" -E
 ```
