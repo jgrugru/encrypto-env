@@ -1,4 +1,4 @@
-from os import path
+from os import path, environ
 from fileflamingo.EncryptionFile import BaseFile
 from fileflamingo.EncryptionFile import EncryptionFile
 from fileflamingo.RSAFile import RSAFile
@@ -54,3 +54,10 @@ class EnvFile(EncryptionFile):
             variable_list)
         encrypted_data = self.encryptor.encrypt_data(data_to_encrypt)
         self.write_bytes_to_file(encrypted_data)
+
+    def set_environment_variable(self, variable):
+        environ[variable[0]] = variable[1]
+
+    def create_environment_variables(self):
+        for variable in self.get_decrypted_data().split('\n'):
+            self.set_environment_variable(self.split_str_by_equalsign(variable))

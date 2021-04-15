@@ -1,5 +1,5 @@
 import sys
-from os import path, listdir
+from os import path, listdir, environ
 from io import StringIO         # noqa: F401
 from pytest import fixture
 
@@ -7,6 +7,8 @@ sys.path.append(path.abspath(path.join(path.dirname(__file__),
                 path.pardir)))
 
 from encryptoenv.CLI import CLI  # noqa: E402
+from encryptoenv.EnvFile import EnvFile  # noqa: E402
+
 
 
 @fixture
@@ -156,3 +158,18 @@ def test_encrypt_and_decrypt(base_args_with_vars_encrypted,
     my_cli.run_script()
     assert not env_file.is_binary()
     assert contents_of_env_file == env_file.get_contents_of_file()
+
+
+def test_create_environment_variables():
+    filename = '.env'
+    pem_filename = 'my_key.pem'
+    environment_path = '/home/jgruenbaum/Desktop/programming_projects/encrypto-env/env'
+
+    my_env_file = EnvFile(filename,
+                        pem_filename,
+                        environment_path,
+                        False)
+
+    my_env_file.create_environment_variables()
+
+    print(environ["Testing"])
