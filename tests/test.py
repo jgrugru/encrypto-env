@@ -164,7 +164,8 @@ def test_create_environment_variables(base_args_with_vars_encrypted):
     my_cli = CLI(base_args_with_vars_encrypted)
     my_cli.run_script()
     my_env_file = my_cli.get_env_file()
-    my_env_file.create_environment_variables()
+    new_env_file = EnvFile(str(my_env_file.get_environment_path()))
+    new_env_file.create_environment_variables()
 
     assert environ["test"] == '123'
     assert environ["test1"] == '123'

@@ -11,10 +11,14 @@ class EnvFile(EncryptionFile):
     """
 
     def __init__(self,
-                 filename,
-                 pem_filename,
                  environment_path,
-                 no_key):
+                 filename='.env',
+                 pem_filename='my_key.pem',
+                 no_key=False):
+
+    # need to set all argument for init to be kwargs, they need to be optional
+    # so I can create envfile with only environment path.
+    # no-key should default to false.
 
         self.environment_path = BaseFile(environment_path)
         self.environment_path.create_filepath()
