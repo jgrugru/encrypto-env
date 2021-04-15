@@ -32,6 +32,9 @@ class EnvFile(EncryptionFile):
             self.filepath = path.join(environment_path, filename)
             self.is_encrypted = False
 
+    def get_environment_path(self):
+        return self.environment_path
+
     def append_variables_to_txt_str(self, text_str, variable_list):
         appending_str = text_str
         for var in variable_list:

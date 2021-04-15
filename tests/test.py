@@ -1,13 +1,13 @@
 import sys
 from os import path, listdir, environ
-from io import StringIO         # noqa: F401
+from io import StringIO                     # noqa: F401
 from pytest import fixture
 
 sys.path.append(path.abspath(path.join(path.dirname(__file__),
                 path.pardir)))
 
-from encryptoenv.CLI import CLI  # noqa: E402
-from encryptoenv.EnvFile import EnvFile  # noqa: E402
+from encryptoenv.CLI import CLI             # noqa: E402
+from encryptoenv.EnvFile import EnvFile     # noqa: E402
 
 
 
@@ -160,16 +160,11 @@ def test_encrypt_and_decrypt(base_args_with_vars_encrypted,
     assert contents_of_env_file == env_file.get_contents_of_file()
 
 
-def test_create_environment_variables():
-    filename = '.env'
-    pem_filename = 'my_key.pem'
-    environment_path = '/home/jgruenbaum/Desktop/programming_projects/encrypto-env/env'
-
-    my_env_file = EnvFile(filename,
-                        pem_filename,
-                        environment_path,
-                        False)
-
+def test_create_environment_variables(base_args_with_vars_encrypted):
+    my_cli = CLI(base_args_with_vars_encrypted)
+    my_cli.run_script()
+    my_env_file = my_cli.get_env_file()
     my_env_file.create_environment_variables()
 
-    print(environ["Testing"])
+    assert environ["test"] == '123'
+    assert environ["test1"] == '123'
