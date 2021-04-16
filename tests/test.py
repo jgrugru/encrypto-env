@@ -10,7 +10,6 @@ from encryptoenv.CLI import CLI             # noqa: E402
 from encryptoenv.EnvFile import EnvFile     # noqa: E402
 
 
-
 @fixture
 def base_args(tmp_path):
     env_dir_path = path.join(str(tmp_path), 'env/')
@@ -169,3 +168,9 @@ def test_create_environment_variables(base_args_with_vars_encrypted):
 
     assert environ["test"] == '123'
     assert environ["test1"] == '123'
+
+
+def test_create_environment_path_with_no_variables():
+    my_env_file = EnvFile()
+    my_env_file.rsa_file.filepath_exists()
+    assert path.exists(path.join(str(my_env_file.get_environment_path()), '.env'))

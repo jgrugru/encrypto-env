@@ -124,12 +124,10 @@ class CLI():
             self.pem_filename = self.args.pem_file
 
     def create_env_file(self):
-        self.env_file = EnvFile(self.environment_path,
+        self.env_file = EnvFile(environment_path=self.environment_path,
                                 filename=self.env_filename,
                                 pem_filename=self.pem_filename,
                                 no_key=self.args.no_key)
-
-        self.env_file.create_filepath()
 
     def clear_option(self):
         if(self.args.clear):

@@ -1,4 +1,4 @@
-from os import path, environ
+from os import path, environ, getcwd
 from fileflamingo.EncryptionFile import BaseFile
 from fileflamingo.EncryptionFile import EncryptionFile
 from fileflamingo.RSAFile import RSAFile
@@ -10,15 +10,18 @@ class EnvFile(EncryptionFile):
     Inherits all the functions from EncryptionFile.
     """
 
+    cwd = getcwd() + '/env/'
+
     def __init__(self,
-                 environment_path,
+                 environment_path=cwd,
                  filename='.env',
                  pem_filename='my_key.pem',
                  no_key=False):
 
-    # need to set all argument for init to be kwargs, they need to be optional
-    # so I can create envfile with only environment path.
-    # no-key should default to false.
+        # need to set all argument for init to be kwargs,
+        # they need to be optional
+        # so I can create envfile with only environment path.
+        # no-key should default to false.
 
         self.environment_path = BaseFile(environment_path)
         self.environment_path.create_filepath()
@@ -35,6 +38,9 @@ class EnvFile(EncryptionFile):
         else:
             self.filepath = path.join(environment_path, filename)
             self.is_encrypted = False
+
+        self.create_filepath()
+
 
     def get_environment_path(self):
         return self.environment_path
@@ -67,4 +73,5 @@ class EnvFile(EncryptionFile):
 
     def create_environment_variables(self):
         for variable in self.get_decrypted_data().split('\n'):
-            self.set_environment_variable(self.split_str_by_equalsign(variable))
+            self.set_environment_variable(
+                self.split_str_by_equalsign(variable))
