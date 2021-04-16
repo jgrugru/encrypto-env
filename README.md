@@ -52,10 +52,11 @@ optional arguments:
 #### Accessing the Variables
 If all the files are in the default location and the _env/_ file is
 in your current working directory, you can add the line of code below to create
-the environment variables.
+the environment variables:
 ```python
-EnvFile().create_environment_variables()
+from encryptoenv.EnvFile import EnvFile
 
+EnvFile().create_environment_variables()
 print(environ["USERNAME"])
 ```
 This is not recommended as the program may not work depending on the user's current
