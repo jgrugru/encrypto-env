@@ -50,12 +50,22 @@ optional arguments:
 ```
 
 #### Accessing the Variables
-If all the files are in the default location, you can run the command below to create
+If all the files are in the default location and the _env/_ file is
+in your current working directory, you can add the line of code below to create
 the environment variables.
 ```python
 EnvFile().create_environment_variables()
 
 print(environ["USERNAME"])
+```
+This is not recommended as the program may not work depending on the user's current
+working directory. I would recomment setting the environment path:
+```python
+EnvFile(environment_path='.\ENV\').create_environment_variables()
+```
+If you need to set the _.env_ filename or _pem_ filename, you can do so through key word arguments:
+```python
+EnvFile(environment_path='.\ENV\', filename='dotenv', pem_filename='RSA_KEY.pem').create_environment_variables()
 ```
 
 ## :open_file_folder: Default paths
