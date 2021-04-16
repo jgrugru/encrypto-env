@@ -11,6 +11,8 @@ pip3 install encryptoenv
 ```
 
 # :hamburger: Examples
+
+#### Basic Use Case
 ```python
 $ encryptoenv -a "USERNAME=JGRUGRU" "PASSWORD=MYPASS!2314" -E
 ```
@@ -45,6 +47,15 @@ optional arguments:
   -D, --Decrypt         Decrypt .env file
   --no-key              Disables creation of my_key.pem file
   -l, --list-variables  List the variable names stored in the .env file
+```
+
+#### Accessing the Variables
+If all the files are in the default location, you can run the command below to create
+the environment variables.
+```python
+EnvFile().create_environment_variables()
+
+print(environ["USERNAME"])
 ```
 
 ## :open_file_folder: Default paths
