@@ -12,7 +12,7 @@ setup(
     packages = find_packages(exclude=("tests",)),
     version = '0.0.1',      # Start with a small number and increase it with every change you make
     license='MIT',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
-    description = 'With one command, you can setup and protect your environment variables.',   # Give a short description about your library
+    description = 'With one command, you can setup and encrypt your environment variables.',   # Give a short description about your library
     author = 'Jeff Gruenbaum',                   # Type in your name
     author_email = 'jeff.gruenbaum@gmail.com',      # Type in your E-Mail
     long_description=README,

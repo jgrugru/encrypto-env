@@ -11,8 +11,13 @@ from encryptoenv.EnvFile import EnvFile     # noqa: E402
 
 
 @fixture
-def base_args(tmp_path):
-    env_dir_path = path.join(str(tmp_path), 'env/')
+def environment_path(tmp_path):
+    return path.join(str(tmp_path), 'env/')
+
+
+@fixture
+def base_args(environment_path):
+    env_dir_path = environment_path
     return [
         "-v",
         "--environment-path",
@@ -131,8 +136,23 @@ def test_no_key_option_with_adding_variables(base_args_with_vars):
     assert not is_there_a_pem_file(file_list)
 
 
-def test_list_variables_option(base_args, base_args_with_vars_encrypted):
+def test_list_variables_option_with_encryption(
+        base_args, base_args_with_vars_encrypted):
     my_cli = CLI(base_args_with_vars_encrypted)
+    my_cli.run_script()
+    base_args.append('-l')
+    old_stdout = sys.stdout
+    sys.stdout = mystdout = StringIO()
+    my_cli = CLI(base_args)
+    my_cli.run_script()
+    sys.stdout = old_stdout
+    stdout_value = mystdout.getvalue()
+    assert 'test' and 'test1' in stdout_value
+
+
+def test_list_variables_option_without_encryption(
+        base_args, base_args_with_vars):
+    my_cli = CLI(base_args_with_vars)
     my_cli.run_script()
     base_args.append('-l')
     old_stdout = sys.stdout
@@ -163,14 +183,26 @@ def test_create_environment_variables(base_args_with_vars_encrypted):
     my_cli = CLI(base_args_with_vars_encrypted)
     my_cli.run_script()
     my_env_file = my_cli.get_env_file()
-    new_env_file = EnvFile(str(my_env_file.get_environment_path()))
+    new_env_file = EnvFile(
+        environment_path=str(my_env_file.get_environment_path()))
     new_env_file.create_environment_variables()
 
     assert environ["test"] == '123'
     assert environ["test1"] == '123'
 
 
-def test_create_environment_path_with_no_variables():
-    my_env_file = EnvFile()
-    my_env_file.rsa_file.filepath_exists()
-    assert path.exists(path.join(str(my_env_file.get_environment_path()), '.env'))
+def test_override_of_env_file(environment_path):
+    env_file1 = EnvFile(environment_path=environment_path)
+    env_file1.append_data_to_file("USERNAME=jgrugru")
+    assert not env_file1.is_empty()
+    assert env_file1.filepath_exists()
+    env_file2 = EnvFile(environment_path=environment_path)
+    assert not env_file2.is_empty()
+
+
+def test_override_of_rsa_key(environment_path):
+    env_file1 = EnvFile(environment_path=environment_path)
+    rsa_key_contents = env_file1.rsa_file.get_contents_of_file()
+    assert env_file1.rsa_file.filepath_exists()
+    env_file2 = EnvFile(environment_path=environment_path)
+    assert rsa_key_contents == env_file2.rsa_file.get_contents_of_file()

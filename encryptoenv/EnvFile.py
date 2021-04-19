@@ -18,29 +18,25 @@ class EnvFile(EncryptionFile):
                  pem_filename='my_key.pem',
                  no_key=False):
 
-        # need to set all argument for init to be kwargs,
-        # they need to be optional
-        # so I can create envfile with only environment path.
-        # no-key should default to false.
-
         self.environment_path = BaseFile(environment_path)
         self.environment_path.create_filepath()
 
         if not no_key:
-            self.rsa_file = RSAFile(path.join(environment_path, pem_filename))
+            self.rsa_file = RSAFile(
+                path.join(self.environment_path.get_filepath(), pem_filename))
             if not self.rsa_file.filepath_exists():
                 self.rsa_file.create_filepath()
                 self.rsa_file.gen_pem_file()
 
             super().__init__(
-                path.join(environment_path, filename),
-                path.join(environment_path, pem_filename))
+                path.join(self.environment_path.get_filepath(), filename),
+                path.join(self.environment_path.get_filepath(), pem_filename))
         else:
-            self.filepath = path.join(environment_path, filename)
+            self.filepath = path.join(
+                self.environment_path.get_filepath(), filename)
             self.is_encrypted = False
 
         self.create_filepath()
-
 
     def get_environment_path(self):
         return self.environment_path

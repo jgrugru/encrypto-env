@@ -144,14 +144,22 @@ class CLI():
                     else:
                         self.env_file.append_data_to_file(x)
 
+    def print_variable_names_from_str(self, string):
+        for count, variable in enumerate(
+                string.split("\n")):
+            if count != 0:
+                print("\n")
+            if variable != "":
+                print(self.env_file.split_str_by_equalsign(variable)[0])
+
     def list_variable_option(self):
         if self.args.list_variables:
-            for count, variable in enumerate(
-                    self.env_file.get_decrypted_data().split("\n")):
-                if count != 0:
-                    print("\n")
-                if variable != "":
-                    print(self.env_file.split_str_by_equalsign(variable)[0])
+            if self.env_file.is_encrypted:
+                self.print_variable_names_from_str(
+                    self.env_file.get_decrypted_data())
+            else:
+                self.print_variable_names_from_str(
+                    self.env_file.get_contents_of_file())
 
     def run_script(self):
 
@@ -177,12 +185,12 @@ class CLI():
         self.add_variable_option()
 
         # -E
-        if self.args.Encrypt and not self.env_file.is_binary():
+        if self.args.Encrypt and not self.env_file.is_encrypted:
             self.env_file.encrypt()
 
         # -l
         self.list_variable_option()
 
         # -D
-        if self.args.Decrypt and self.env_file.is_binary():
+        if self.args.Decrypt and self.env_file.is_encrypted:
             self.env_file.decrypt()
