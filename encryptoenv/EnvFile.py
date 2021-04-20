@@ -18,6 +18,9 @@ class EnvFile(EncryptionFile):
                  pem_filename='my_key.pem',
                  no_key=False):
 
+        if not str(environment_path)[len(environment_path)-1] == '/':
+            environment_path = environment_path + '/'
+
         self.environment_path = BaseFile(environment_path)
         self.environment_path.create_filepath()
 

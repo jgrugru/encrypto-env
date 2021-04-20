@@ -195,7 +195,6 @@ def test_override_of_env_file(environment_path):
     env_file1 = EnvFile(environment_path=environment_path)
     env_file1.append_data_to_file("USERNAME=jgrugru")
     assert not env_file1.is_empty()
-    assert env_file1.filepath_exists()
     env_file2 = EnvFile(environment_path=environment_path)
     assert not env_file2.is_empty()
 
@@ -203,6 +202,11 @@ def test_override_of_env_file(environment_path):
 def test_override_of_rsa_key(environment_path):
     env_file1 = EnvFile(environment_path=environment_path)
     rsa_key_contents = env_file1.rsa_file.get_contents_of_file()
-    assert env_file1.rsa_file.filepath_exists()
     env_file2 = EnvFile(environment_path=environment_path)
     assert rsa_key_contents == env_file2.rsa_file.get_contents_of_file()
+
+
+def test_file_without_ending_slash(tmp_path):
+    environment_path = path.join(str(tmp_path), 'env')
+    env_file = EnvFile(environment_path=environment_path)
+    assert env_file.get_environment_path().is_dir()
