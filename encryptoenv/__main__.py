@@ -6,7 +6,7 @@ path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
 
 from encryptoenv.CLI import CLI
 
-if __name__ == "__main__":
+def main():
     my_cli = CLI(argv[1:])
     my_cli.run_script()
 
