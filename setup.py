@@ -22,11 +22,11 @@ setup(
     url = 'https://github.com/jgrugru/encrypto-env',   # Provide either the link to your github or to your website
     keywords = ["encryption", "environment_variables", "env", "dotenv", "python", "environment"],
     install_requires=[
-        "fileflamingo==0.0.5",
+        "fileflamingo",
     ],
     entry_points='''
             [console_scripts]
-            encryptoenv=encryptoenv.__main__:main
+            encryptoenv=encryptoenv.__main__
         ''',
     include_package_data=True,
     classifiers=[
