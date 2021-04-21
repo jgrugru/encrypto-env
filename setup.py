@@ -1,6 +1,8 @@
 from distutils.core import setup
 from setuptools import find_packages, setup
 from pathlib import Path
+from io import open
+from os import path
 
 HERE = Path(__file__).parent
 
@@ -20,8 +22,12 @@ setup(
     url = 'https://github.com/jgrugru/encrypto-env',   # Provide either the link to your github or to your website
     keywords = ["encryption", "environment_variables", "env", "dotenv", "python", "environment"],
     install_requires=[
-        "pycryptodome==3.10.1",
+        "fileflamingo==0.0.5",
     ],
+    entry_points='''
+            [console_scripts]
+            encryptoenv=encryptoenv.__main__:main
+        ''',
     include_package_data=True,
     classifiers=[
         "License :: OSI Approved :: MIT License",
@@ -30,4 +36,3 @@ setup(
     ],
 )
 
-# flake8: noqa
