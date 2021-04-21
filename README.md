@@ -115,9 +115,3 @@ You can also add additional arguments:
 ```
 $ python encryptoenv/main.py @my_parameters.txt -a "USERNAME=jgrugru" -E
 ```
-
-
-Features to add
---------------
-encryptoenv --setup .   (Don't create all the filepaths when running with no arguments. That should open the help option.)
-environment path should only utilize os.makedirs (the user should not have to specify a slash at the end: getcwd() + '/env/')
