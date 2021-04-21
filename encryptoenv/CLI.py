@@ -3,7 +3,7 @@ from os import getcwd
 
 from .EnvFile import EnvFile
 
-cli_version = '0.0.4'
+cli_version = '0.0.1-beta'
 
 
 class CLI():
