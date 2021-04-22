@@ -131,3 +131,5 @@ dmypy.json
 .pyre/
 
 .vscode
+encryptoenv/main_testing.py
+examples.py
