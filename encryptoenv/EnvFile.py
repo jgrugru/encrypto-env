@@ -3,6 +3,8 @@ from fileflamingo.EncryptionFile import BaseFile
 from fileflamingo.EncryptionFile import EncryptionFile
 from fileflamingo.RSAFile import RSAFile
 
+line_separator = b'aJh@WDFWDg-#4jZr'
+
 
 class EnvFile(EncryptionFile):
     """
@@ -44,33 +46,25 @@ class EnvFile(EncryptionFile):
     def get_environment_path(self):
         return self.environment_path
 
-    def append_variables_to_txt_str(self, text_str, variable_list):
-        appending_str = text_str
-        for var in variable_list:
-            appending_str += var + '\n'
-
-        return appending_str
-
     def split_str_by_equalsign(self, variable):
         return variable.split("=")
 
-    def get_decrypted_data(self):
-        decrypted_data = self.encryptor.decrypt_data(
-            self.get_bytes_from_file())
-        return decrypted_data
-
     def add_variables_as_bytes(self, variable_list):
-        decrypted_data = self.get_decrypted_data()
-        data_to_encrypt = self.append_variables_to_txt_str(
-            decrypted_data,
-            variable_list)
-        encrypted_data = self.encryptor.encrypt_data(data_to_encrypt)
-        self.write_bytes_to_file(encrypted_data)
+        for var in variable_list:
+            encrypted_line = self.encrypt_line(var)
+            self.write_byte_line_to_file(encrypted_line)
+
+    def add_variables_as_text(self, variable_list):
+        if not self.is_empty():             # this counteracts the strip()
+            self.append_text_to_file('\n')
+        for var in variable_list:
+            var = var.strip()
+            text_line = self.write_text_line_to_file(var)
 
     def set_environment_variable(self, variable):
         environ[variable[0]] = variable[1]
 
     def create_environment_variables(self):
-        for variable in self.get_decrypted_data().split('\n'):
+        for variable in self.get_decrypted_lines_as_list():
             self.set_environment_variable(
                 self.split_str_by_equalsign(variable))

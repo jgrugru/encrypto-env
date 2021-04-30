@@ -135,14 +135,10 @@ class CLI():
 
     def add_variable_option(self):
         if self.args.add_variable:
-            if self.env_file.is_encrypted:
+            if self.env_file.is_decryptable():
                 self.env_file.add_variables_as_bytes(self.args.add_variable)
             else:
-                for x in self.args.add_variable:
-                    if not self.env_file.is_empty():
-                        self.env_file.append_data_to_file('\n' + x)
-                    else:
-                        self.env_file.append_data_to_file(x)
+                self.env_file.add_variables_as_text(self.args.add_variable)
 
     def print_variable_names_from_str(self, string):
         for count, variable in enumerate(
@@ -154,12 +150,10 @@ class CLI():
 
     def list_variable_option(self):
         if self.args.list_variables:
-            if self.env_file.is_encrypted:
-                self.print_variable_names_from_str(
-                    self.env_file.get_decrypted_data())
+            if self.env_file.is_decryptable():
+                print(self.env_file.get_decrypted_lines_as_list())
             else:
-                self.print_variable_names_from_str(
-                    self.env_file.get_contents_of_file())
+                print(self.env_file.get_lines_as_list_from_text_file())
 
     def run_script(self):
 
@@ -185,12 +179,12 @@ class CLI():
         self.add_variable_option()
 
         # -E
-        if self.args.Encrypt and not self.env_file.is_encrypted:
+        if self.args.Encrypt and not self.env_file.is_decryptable():
             self.env_file.encrypt()
 
         # -l
         self.list_variable_option()
 
         # -D
-        if self.args.Decrypt and self.env_file.is_encrypted:
+        if self.args.Decrypt and self.env_file.is_decryptable():
             self.env_file.decrypt()
