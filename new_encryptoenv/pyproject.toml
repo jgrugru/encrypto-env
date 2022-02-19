@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "new_encryptoenv"
+version = "0.1.0"
+description = ""
+authors = ["jgrugru <jeff.gruenbaum@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+click = "^8.0.4"
+cryptography = "^36.0.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
