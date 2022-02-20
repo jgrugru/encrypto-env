@@ -1,3 +1,7 @@
+![Untitled_Artwork 2](https://user-images.githubusercontent.com/24437648/154866935-59290ef4-d5de-46f6-8f89-69c3d6ece40c.png)
+
+
+
 # encrypto-env [![Build Status](https://travis-ci.com/jgrugru/encrypto-env.svg?branch=main)](https://travis-ci.com/jgrugru/encrypto-env)
 With one command, you can setup and encrypt your environment variables. 
 
