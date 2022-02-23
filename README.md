@@ -1,5 +1,4 @@
-![Untitled_Artwork 2](https://user-images.githubusercontent.com/24437648/154866935-59290ef4-d5de-46f6-8f89-69c3d6ece40c.png)
-
+![Untitled_Artwork 3](https://user-images.githubusercontent.com/24437648/155350415-d825a7e1-51a6-4ea9-a655-d341d6646756.png)
 
 
 # encrypto-env [![Build Status](https://travis-ci.com/jgrugru/encrypto-env.svg?branch=main)](https://travis-ci.com/jgrugru/encrypto-env)
