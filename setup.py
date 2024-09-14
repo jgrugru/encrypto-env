@@ -1,8 +1,9 @@
 from distutils.core import setup
-from setuptools import find_packages, setup
-from pathlib import Path
 from io import open
 from os import path
+from pathlib import Path
+
+from setuptools import find_packages, setup
 
 HERE = Path(__file__).parent
 
